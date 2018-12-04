@@ -1,0 +1,29 @@
+{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% trans_default_domain 'profile_admin' %}
+
+{% block title %}
+    {{ 'expection.error'|trans }}
+{% endblock %}
+
+{% if isZenith %}
+    {% set list_text = 'jobs'|trans %}
+{% else %}
+    {% set list_text = 'profiles'|trans %}
+{% endif %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li>
+        <a href="{{ url('admin_app_client_show', {'id': client.id}) }}">{{ client.user.name }}</a>
+    </li>
+    <li>
+        <a href="{{ url('profile_admin__profile_list', {'clientId': client.id}) }}">{{ list_text }}</a>
+    </li>
+    <li class="active">{{ 'expection.error'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">
+        {{ 'expection.profile.not_found'|trans }}
+    </div>
+{% endblock %}

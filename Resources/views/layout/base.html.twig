@@ -1,0 +1,7 @@
+{% extends 'AppBundle:Admin:standard_layout_override.html.twig' %}
+
+{% block breadcrumb %}
+    <li>
+        <a href="{{ url('admin_app_client_list') }}">{{ 'button.clients'|trans }}</a>
+    </li>
+{% endblock %}

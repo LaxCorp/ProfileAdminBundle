@@ -1,0 +1,6 @@
+{% trans_default_domain 'profile_admin' %}{% spaceless %}
+{% if isZenith %}
+    {{ 'messages.job_success_create'|trans }}
+{% else %}
+    {{ 'messages.profile_success_create'|trans }}
+{% endif %}{% endspaceless %}: {{ name }}

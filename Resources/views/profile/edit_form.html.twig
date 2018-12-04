@@ -1,0 +1,66 @@
+{% trans_default_domain 'profile_admin' %}
+
+    {{ form_start(form, {
+        'attr': {
+            'action': path('profile_admin__profile_action', {
+                'clientId': client.id,
+                'profileId': profile.id,
+                'action': 'edit'
+            })}
+    }) }}
+<div class="box-body container-fluid">
+    <div class="sonata-ba-collapsed-fields">
+        <div class="row">
+            {% set _class = 'sonata-ba-collapsed-fields col-md-6' %}
+            <div class="{{ _class }}">
+                {{ form_row(form.name) }}
+                {% if form.domainName is defined %}{{ form_row(form.domainName) }}{% endif %}
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>{{ 'label.customer_login'|trans }}</label>
+                        <h5>{{ profile.customer.login }}</h5>
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_row(form.customer.state) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.customer.password) }}
+                    </div>
+                    <div class="col-md-2">
+                        <label>&nbsp;</label>
+                        <button type="button" data-toggle="pwgen"
+                                data-result-id="{{ form.customer.password.vars['id'] }}"
+                                class="btn btn-warning">
+                            {{ 'button.pwgen'|trans }}
+                        </button>
+                    </div>
+                </div>
+                {{ form_row(form.customer.toDate) }}
+            </div>
+            <div class="{{ _class }}">
+                {% if form.hostingType is defined %}{{ form_row(form.hostingType) }}{% endif %}
+                {% if form.domainType is defined %}{{ form_row(form.domainType) }}{% endif %}
+                {% if form.fqdn is defined %}{{ form_row(form.fqdn) }}{% endif %}
+                {% if form.backUrl is defined %}{{ form_row(form.backUrl) }}{% endif %}
+                {% if form.backUrlNewWindow is defined %}{{ form_row(form.backUrlNewWindow) }}{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box-footer">
+    <button type="submit" class="btn btn-success">
+        <i class="fa fa-save" aria-hidden="true"></i>
+        {{ 'button.save'|trans }}
+    </button>
+
+    <button type="button" class="btn btn-danger" data-action="delete_profile"
+            data-client-id="{{ client.id }}" data-profile-id="{{ profile.id }}"
+            data-toggle="confirmation" data-title="{{ 'confirm.are_you_sure'|trans }}"
+            data-btn-ok-label="{{ 'button.yes'|trans }}" data-btn-cancel-label="{{ 'button.no'|trans }}">
+        <i class="fa fa-minus-circle" aria-hidden="true"></i>
+        {{ 'button.delete_profile'|trans }}
+    </button>
+</div>
+{{ form_end(form) }}
+

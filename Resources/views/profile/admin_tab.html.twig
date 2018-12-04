@@ -1,0 +1,4 @@
+{% trans_default_domain 'profile_admin' %}
+{% set client = object %}
+{{ render(controller('ProfileAdminBundle:Profile:shortList', {'client': client })) }}
+

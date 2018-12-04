@@ -1,0 +1,30 @@
+{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% trans_default_domain 'profile_admin' %}
+
+{% if isZenith %}
+    {% set title = 'jobs'|trans %}
+    {% set tab_title = 'jobs_list'|trans %}
+{% else %}
+    {% set title = 'profiles'|trans %}
+    {% set tab_title = 'profiles_list'|trans %}
+{% endif %}
+
+{% block title %}
+    - {{ client.user.name }} - {{ tab_title }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li>
+        <a href="{{ path('admin_app_client_show', {'id': client.id}) }}">{{ client.user.name }}</a>
+    </li>
+    <li class="active">
+        <a href="{{ path('profile_admin__profile_list', {'clientId': client.id}) }}">
+            {{ title }}
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    {% include 'ProfileAdminBundle:profile:tab_list_content.html.twig' %}
+{% endblock %}

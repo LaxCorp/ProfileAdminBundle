@@ -1,0 +1,4 @@
+lax_corp_profile_admin:
+    resource: "@ProfileAdminBundle/Controller/"
+    type:     annotation
+    prefix: /admin/app

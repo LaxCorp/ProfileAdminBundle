@@ -1,0 +1,142 @@
+.customer_info_table td > .input-prepend.input-group .input-prepend.input-group > span {
+    display: none;
+}
+
+/* Нечетные строки */
+.row-striped .row:nth-child(odd) {
+
+}
+
+/* Четные строки */
+.row-striped .row:nth-child(even) {
+    border-bottom: 1px dashed #ddd;
+    border-top: 1px dashed #ddd;
+}
+
+.row-striped .row:last-child {
+    border-bottom: none;
+}
+
+/* Отступ */
+.row-striped > * {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.row-striped-large .row:nth-child(odd) {
+
+}
+
+/* Четные строки */
+.row-striped-large .row:nth-child(even) {
+    border-top: 1px dashed #ddd;
+    border-bottom: 1px dashed #ddd;
+}
+
+/* Отступ */
+.row-striped-large > * {
+    font-size: 16px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.row-striped-large .label {
+    font-size: 90%;
+}
+
+.compare-row {
+    display: flex;
+    align-items: center;
+}
+
+.compare-row-arrow {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    color: #dd4b39;
+}
+
+[data-container=loader] {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    opacity: 0.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: wait;
+    background-color: white;
+    z-index: 3;
+}
+
+[data-container=loader] .glyphicon-refresh-animate {
+    font-size: xx-large;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: scale(1) rotate(0deg);
+    }
+    to {
+        transform: scale(1) rotate(360deg);
+    }
+}
+
+.change-tariff-options {
+    display: flex;
+    align-items: center;
+}
+
+.change-tariff-options {
+    white-space: nowrap;
+}
+
+.change-tariff-options :nth-child(odd) {
+    margin-right: 4px;
+}
+
+.change-tariff-options :nth-child(even) {
+    margin-right: 25px;
+}
+
+.change-tariff-options :last-child {
+    margin-right: auto;
+}
+
+.change-tariff-options input[type=number]::-webkit-inner-spin-button,
+.change-tariff-options input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+.change-tariff-options-fit {
+    width: 100%;
+    text-align: right;
+}
+
+.tariff-permissions-buttons button:not(:last-child) {
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+
+.tariff-permissions-buttons div.collapse {
+    margin: 4px 0;
+}
+

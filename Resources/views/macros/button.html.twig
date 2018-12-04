@@ -1,0 +1,67 @@
+{% trans_default_domain 'profile_admin' %}
+
+{% macro confirm(value, action, result_container, button_class, icon) %}
+    {% import _self as macros_button %}
+
+    {% if not button_class %}
+        {% set button_class = 'btn-primary' %}
+    {% endif %}
+
+    {% if is_granted('ROLE_CLIENT_PROFILE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+        <button type="button" class="btn {{ button_class }}" data-title="{{ 'confirm.are_you_sure'|trans }}"
+                data-action="{{ action }}" data-result-container="{{ result_container }}" data-toggle="confirmation"
+                data-btn-ok-label="{{ 'button.yes'|trans }}" data-btn-cancel-label="{{ 'button.no'|trans }}">
+            {{ macros_button.faicon(icon) }}
+            {{ value }}
+        </button>
+    {% else %}
+        <button type="button" class="btn disabled {{ button_class }}"
+                title="{{ 'messages.insufficient_rights'|trans }}">
+            {{ macros_button.faicon(icon) }}
+            {{ value }}
+        </button>
+    {% endif %}
+{% endmacro %}
+
+{% macro modal(value, action, result_container, button_class, icon) %}
+    {% import _self as macros_button %}
+
+    {% if not button_class %}
+        {% set button_class = 'btn-primary' %}
+    {% endif %}
+
+    {% if is_granted('ROLE_CLIENT_PROFILE_ADMIN') or is_granted('ROLE_SUPER_ADMIN') %}
+        <button type="button" class="btn {{ button_class }}" data-title="{{ 'confirm.are_you_sure'|trans }}"
+                data-action="{{ action }}" data-result-container="{{ result_container }}" data-toggle="modal"
+                data-btn-ok-label="{{ 'button.yes'|trans }}" data-btn-cancel-label="{{ 'button.no'|trans }}">
+            {{ macros_button.faicon(icon) }}
+            {{ value }}
+        </button>
+    {% else %}
+        <button type="button" class="btn disabled {{ button_class }}"
+                title="{{ 'messages.insufficient_rights'|trans }}">
+            {{ macros_button.faicon(icon) }}
+            {{ value }}
+        </button>
+    {% endif %}
+{% endmacro %}
+
+{# http://fontawesome.ru/all-icons/ #}
+{% macro faicon(name) %}
+    {% if name is defined %}
+        <i class="fa {{ name }}" aria-hidden="true"></i>
+    {% endif %}
+{% endmacro %}
+
+{% macro show_password(value) %}
+    {% import _self as macros_button %}
+    <div class="input-group" data-container="show_password">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" data-toggle="show_password"
+                data-icon="fa-eye" data-icon-pressed="fa-eye-slash">
+            {{ macros_button.faicon('fa-eye') }}
+        </button>
+      </span>
+        <input type="password" class="form-control" value="{{ value }}" readonly="readonly">
+    </div>
+{% endmacro %}

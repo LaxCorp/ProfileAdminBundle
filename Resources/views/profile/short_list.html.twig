@@ -1,0 +1,96 @@
+{% trans_default_domain 'profile_admin' %}
+{% import 'ProfileAdminBundle:macros:profile.html.twig' as macros_profile %}
+
+{% if isZenith %}
+    {% set title = 'jobs'|trans %}
+    {% set tab_title = 'jobs_list'|trans %}
+{% else %}
+    {% set title = 'profiles'|trans %}
+    {% set tab_title = 'profiles_list'|trans %}
+{% endif %}
+
+
+<div class="panel panel-default">
+
+    <div class="panel-heading">
+        <div class="btn-group" role="group">
+
+            <a href="" class="btn btn-link">
+                <i class="fa fa-refresh" aria-hidden="true"></i>
+                {{ tab_title }}
+            </a>
+
+            {% if isGrantedEdit %}
+                {% if isZenith %}
+                    <a href="{{ path('profile_admin__create_profile', {'clientId': client.id}) }}"
+                       class="btn btn-link">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {{ 'profile.create_new_job'|trans }}
+                    </a>
+                {% else %}
+                    <a href="{{ path('profile_admin__create_profile', {'clientId': client.id}) }}"
+                       class="btn btn-link">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {{ 'profile.create_new'|trans }}
+                    </a>
+                    <a href="{{ path('profile_admin__create_profile_for1c', {
+                        'clientId': client.id,
+                        'for1c': 'for1c'
+                    }) }}" class="btn btn-link">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                        {{ 'profile.create_new_for1c'|trans }}
+                    </a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>{{ 'label.profile_name'|trans }}</th>
+            <th>{{ 'label.customer_login'|trans }}</th>
+            <th>{{ 'label.state'|trans }}</th>
+            <th></th>
+            <th width="100%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for profile in profiles %}
+            {% set customer = profile.customer %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td nowrap="nowrap">{{ profile.name }}</td>
+                <td nowrap="nowrap">{{ customer.login }}</td>
+                {% set satus_class = macros_profile.customer_status(customer.state, customer.billingState) %}
+                <td nowrap="nowrap" class="text-{{ satus_class }}">
+                    {{ macros_profile.customer_status(customer.state, customer.billingState, 'text') }}
+                </td>
+                <td nowrap="nowrap">
+                    <a href="{{ path('profile_admin__profile_action', {
+                        'profileId': profile.id, 'clientId': client.id, 'action': 'show'
+                    }) }}" target="_blank">
+                        <i class="fa fa-info" aria-hidden="true"></i>
+                        {{ 'button.show'|trans }}
+                    </a>
+                </td>
+                <td nowrap="nowrap">
+                    {% if isGrantedEdit %}
+                        <a href="{{ path('profile_admin__profile_action', {
+                            'profileId': profile.id, 'clientId': client.id, 'action': 'edit'
+                        }) }}" target="_blank">
+                            <i class="fa fa-edit" aria-hidden="true"></i>
+                            {{ 'button.edit'|trans }}
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+
+

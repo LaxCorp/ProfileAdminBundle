@@ -1,0 +1,128 @@
+{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% trans_default_domain 'profile_admin' %}
+{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+{% import 'ProfileAdminBundle:macros:profile.html.twig' as macros_profile %}
+
+{% set for1c = profile.for1C|default(0) %}
+{% set client = profile.client %}
+{% set customer = profile.customer %}
+{% set tariffs = customer.customerTariffs %}
+
+{% if isZenith %}
+    {% set edit_profile = 'profile.edit_job'|trans~': '~profile.name %}
+    {% set box_title = 'label.purchased_tariffs'|trans %}
+    {% set add_tariff_text = 'button.add_tariff'|trans %}
+    {% set list_text = 'jobs'|trans %}
+{% else %}
+    {% set edit_profile = 'profile.edit'|trans~': '~profile.name %}
+    {% set box_title = 'label.purchased_licenses'|trans %}
+    {% set add_tariff_text = 'button.add_license'|trans %}
+    {% set list_text = 'profiles'|trans %}
+{% endif %}
+
+{% block title %}
+    - {{ profile.client.user.name }}
+    - {% if action == 'show' %}{{ profile.name }}{% else %}{{ edit_profile }}{% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li>
+        <a href="{{ url('admin_app_client_show', {'id': client.id}) }}">{{ client.user.name }}</a>
+    </li>
+    <li>
+        <a href="{{ url('profile_admin__profile_list', {'clientId': client.id}) }}">{{ list_text }}</a>
+    </li>
+    <li class="active">
+        <a href="{{ path('profile_admin__profile_action', {
+            'clientId': client.id,
+            'profileId': profile.id,
+            'action': 'edit'
+        }) }}">
+            {{ edit_profile }}
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div data-container="profiles" data-client-id="{{ client.id }}">
+        <div data-container="profile" data-profile-id="{{ profile.id }}" data-for1c="{{ for1c }}">
+            <div class="sonata-ba-show">
+                <div class="sonata-ba-view">
+                    <div class="nav-tabs-custom">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li{% if action == 'show' %} class="active"{% endif %}>
+                                <a href="#tab_info" class="changer-tab" aria-controls="tab_info"
+                                   data-toggle="tab"
+                                   aria-expanded="{% if action == 'show' %}true{% else %}false{% endif %}">
+                                    {{ 'label.info'|trans }}
+                                </a>
+                            </li>
+                            <li{% if action == 'edit' %} class="active"{% endif %}>
+                                <a href="#tab_edit" class="changer-tab" aria-controls="tab_edit"
+                                   data-toggle="tab"
+                                   aria-expanded="{% if action == 'show' %}true{% else %}false{% endif %}">
+                                    {{ edit_profile }}
+                                </a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div class="tab-pane fade {% if action == 'show' %}active{% endif %} in" id="tab_info">
+                                <div class="box-body container-fluid">
+                                    <div class="sonata-ba-collapsed-fields">
+                                        {{ macros_profile.profile_info(
+                                            profile,
+                                            catalogDisabled,
+                                            currentCatalogDomain
+                                        ) }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade {% if action == 'edit' %}active {% endif %} in" id="tab_edit">
+                                {% if isGrantedEdit %}
+                                    {% include 'ProfileAdminBundle:profile:edit_form.html.twig' %}
+                                {% else %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{ 'expection.access_denied'|trans }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box box-primary">
+                <div class="box-header row">
+                    <h4 class="box-title col-md-7">{{ box_title }}</h4>
+                    {% if isGrantedEdit %}
+                        <div class="col-md-5">
+                            <button type="button" data-action="add_tariff_choose" data-result-container="trariffs"
+                                    data-toggle="modal" class="pull-right">
+                                <span class="glyphicon glyphicon-plus-sign"></span>
+                                <span>{{ add_tariff_text }}</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="box-body">
+                    <div data-container="tariffs">
+                        {% for tariff in tariffs %}
+                            {% if tariff.replacement != true %}
+                                {{ macros_tariff.card(tariff, customer, profile, isGrantedEdit, isZenith) }}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('[data-toggle=pwgen]').profile_admin_pwgen({
+            'password_lenght': {{ render(controller('AppBundle:Customer:customerPasswordLength')) }}
+        });
+    </script>
+{% endblock %}

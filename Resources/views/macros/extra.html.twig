@@ -1,0 +1,5 @@
+{% macro fields(tariff) %}
+    <input type="hidden" name="tariffs[]" value="{{ tariff.id }}">
+    <input type="hidden" name="autoRenewals[]" value="{{ tariff.autoRenewal|default(0) }}">
+    <input type="hidden" name="multipliers[]" value="{{ tariff.multiplier|default(1) }}">
+{% endmacro %}

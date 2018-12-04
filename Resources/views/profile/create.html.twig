@@ -1,0 +1,105 @@
+{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% trans_default_domain 'profile_admin' %}
+{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+
+{% set for1c = profile.for1C|default(0) %}
+{% set customer = profile.customer %}
+{% if isZenith %}
+    {% set create_new = 'profile.create_new_job'|trans %}
+    {% set create_url = path('profile_admin__create_profile', {'clientId': client.id}) %}
+    {% set box_title = 'label.create_with_tariffs'|trans %}
+    {% set button_text = 'button.add_tariff'|trans %}
+    {% set list_text = 'jobs'|trans %}
+{% else %}
+    {% if for1c %}
+        {% set create_new = 'profile.create_new_for1c'|trans %}
+        {% set create_url = path('profile_admin__create_profile_for1c', {'clientId': client.id, 'for1c': 'for1c'}) %}
+    {% else %}
+        {% set create_new = 'profile.create_new'|trans %}
+        {% set create_url = path('profile_admin__create_profile', {'clientId': client.id}) %}
+    {% endif %}
+    {% set box_title = 'label.create_with_licenses'|trans %}
+    {% set button_text = 'button.add_license'|trans %}
+    {% set list_text = 'profiles'|trans %}
+{% endif %}
+
+{% block title %}
+    - {{ profile.client.user.name }} - {{ create_new }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li>
+        <a href="{{ path('admin_app_client_show', {'id': client.id}) }}">{{ client.user.name }}</a>
+    </li>
+    <li>
+        <a href="{{ path('profile_admin__profile_list', {'clientId': client.id}) }}">{{ list_text }}</a>
+    </li>
+    <li class="active">
+        <a href="{{ create_url }}">{{ create_new }}</a>
+    </li>
+{% endblock %}
+
+{% block content %}
+    {{ form_start(form) }}
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h4 class="box-title">
+                {{ create_new }}
+            </h4>
+        </div>
+        <div class="box-body">
+            <div class="row">
+                {% set _class = 'sonata-ba-collapsed-fields col-md-6' %}
+                <div class="{{ _class }}">
+                    {% if form.jobs is defined %}{{ form_row(form.jobs) }}{% endif %}
+                    {{ form_row(form.name, {'attr': {'placeholder': 'placeholder.auto'|trans}}) }}
+                    {% if form.domainName is defined %}{{ form_row(form.domainName) }}{% endif %}
+                    {{ form_row(form.state) }}
+                    {{ form_row(form.toDate) }}
+                </div>
+                <div class="{{ _class }}">
+                    {% if form.hostingType is defined %}{{ form_row(form.hostingType) }}{% endif %}
+                    {% if form.domainType is defined %}{{ form_row(form.domainType) }}{% endif %}
+                    {% if form.fqdn is defined %}{{ form_row(form.fqdn) }}{% endif %}
+                    {% if form.backUrl is defined %}{{ form_row(form.backUrl) }}{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="box box-primary">
+        <div class="box-header">
+            <h4 class="box-title">{{ box_title }}</h4>
+        </div>
+        <div class="box-body">
+            <div data-container="profile_admin" data-client-id="{{ profile.client.id }}">
+                <div data-container="template_tariffs" data-client-id="{{ profile.client.id }}" data-profile-id=""
+                     data-add-text="{{ button_text }}" data-for1c="{{ for1c }}">
+                    {% for tariff in tariffs %}
+                        {% if tariff.replacement != true %}
+                            {{ macros_tariff.card(tariff, customer, profile, isZenith) }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sonata-ba-form-actions well well-small form-actions">
+        <button type="submit" class="btn btn-success">
+            <i class="fa fa-save" aria-hidden="true"></i>
+            {{ create_new }}
+        </button>
+    </div>
+
+    {{ form_end(form) }}
+
+    <script type="text/javascript">
+        $(function () {
+            $('[data-container=template_tariffs]').profile_admin_template_tariff();
+        });
+    </script>
+{% endblock %}

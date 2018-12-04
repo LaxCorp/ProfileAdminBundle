@@ -1,0 +1,17 @@
+{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% trans_default_domain 'profile_admin' %}
+
+{% block title %}
+    {{ 'expection.error'|trans }}
+{% endblock %}
+
+{% block breadcrumb %}
+    {{ parent() }}
+    <li class="active">{{ 'expection.error'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="alert alert-danger" role="alert">
+        {{ 'expection.client.not_found'|trans }}
+    </div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% trans_default_domain 'profile_admin' %}
+
+{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+
+<div data-container="modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">
+                    {% if isZenith %}
+                        {{ 'label.add_tariff_choose'|trans }}
+                    {% else %}
+                        {{ 'label.add_license_choose'|trans }}
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div data-container="profile_admin" data-client-id="{{ profile.client.id }}"
+                     class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div data-container="choose_tariffs"
+                         data-client-id="{{ profile.client.id }}"
+                         data-profile-id="{{ profile.id }}"
+
+                    >
+                        {% if tariffs %}
+                            {% for tariff in tariffs %}
+                                {{ macros_tariff.add_tariff_card(tariff, customer, profile, isZenith) }}
+                            {% endfor %}
+                        {% else %}
+                            {% if isZenith %}
+                                {{ 'messages.no_need_to_add_tariff'|trans }}
+                            {% else %}
+                                {{ 'messages.no_need_to_add_license'|trans }}
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

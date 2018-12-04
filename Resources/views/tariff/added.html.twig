@@ -1,0 +1,11 @@
+{% trans_default_domain 'profile_admin' %}
+{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+
+{% set customer = profile.customer %}
+{% set tariffs = customer.customerTariffs %}
+
+{% for tariff in tariffs %}
+    {% if tariff.replacement != true %}
+        {{ macros_tariff.card(tariff, customer, profile, isGrantedEdit, isZenith) }}
+    {% endif %}
+{% endfor %}

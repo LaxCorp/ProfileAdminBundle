@@ -1,0 +1,348 @@
+{% trans_default_domain 'profile_admin' %}
+
+{% macro acquisition_fee_paid_button(acquisitionFeePaid) %}
+    {% import _self as macros %}
+    {% set sum = 0 %}
+    {% set details = '' %}
+    {% set unique_id = 'aqpaid' %}
+
+    {% if acquisitionFeePaid %}
+        {% for item in acquisitionFeePaid %}
+
+            {% set sum = sum + item.amount %}
+            {% set details %}
+                {{ details }}
+                <tr>
+                    <td>{{ item.date|date('d.m.Y H:i') }}</td>
+                    <td>{{ item.serviceCode }}</td>
+                    <td>{{ item.amount }} руб.</td>
+                </tr>
+            {% endset %}
+        {% endfor %}
+
+        <button type="button" data-toggle="collapse" data-target="#{{ unique_id }}" class="btn btn-sm btn-success">
+            {{ sum }} руб.
+        </button>
+        <table id="{{ unique_id }}" class="table collapse" style="width:auto">
+            {{ details }}
+        </table>
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}
+
+{% macro param_row(name, value) %}{% spaceless %}
+    <div class="row">
+        <div class="col-lg-5 text-mute">{{ name }}</div>
+        <div class="col-lg-7 text-info">{{ value }}</div>
+    </div>
+{% endspaceless %}{% endmacro %}
+
+{#выдавать одну из переменных по choise#}
+{% macro text_or_class(text, class, choise) %}{% spaceless %}
+    {% if choise == 'text' %}{{ text }}{% else %}{{ class }}{% endif %}
+{% endspaceless %}{% endmacro %}
+
+{#статус профиля#}
+{% macro customer_status(state, billingState, choise) %}{% spaceless %}
+    {% import _self as macros_profile %}
+
+    {% if state == 'DISABLED' %}
+        {{ macros_profile.text_or_class('customer_status.client_blocked'|trans, 'default', choise) }}
+    {% endif %}
+    {% if state == 'ENABLED' and billingState == 'RESTRICTED' %}
+        {{ macros_profile.text_or_class('customer_status.restricted'|trans, 'warning', choise) }}
+    {% endif %}
+    {% if state == 'RESTRICTED' and billingState == 'DISABLED' %}
+        {{ macros_profile.text_or_class('customer_status.paid_resources_only'|trans, 'warning', choise) }}
+    {% endif %}
+    {% if state == 'ENABLED' and billingState == 'DISABLED' %}
+        {{ macros_profile.text_or_class('customer_status.billing_disabled'|trans, 'danger', choise) }}
+    {% endif %}
+    {% if state == 'ENABLED' and billingState == 'ENABLED' %}
+        {{ macros_profile.text_or_class('customer_status.active'|trans, 'success', choise) }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro profile_info(profile, catalogDisabled, currentCatalogDomain) %}{% spaceless %}
+    {% import _self as macros_profile %}
+    {% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% set customer = profile.customer %}
+
+    <div class="row">
+        <div class="col-md-5 row-striped-large">
+            {{ macros_profile.param_row('label.profile_name'|trans, profile.name) }}
+
+            {% set class %}{% spaceless %}
+                {{ macros_profile.customer_status(customer.state, customer.billingState) }}
+            {% endspaceless %}{% endset %}
+            {% set stateItem %}
+                <span class="label label-{{ class }}">
+                    {{ macros_profile.customer_status(customer.state, customer.billingState, 'text') }}
+                </span>
+            {% endset %}
+            {{ macros_profile.param_row('label.state'|trans, stateItem) }}
+
+            {{ macros_profile.param_row('label.customer_login'|trans, customer.login) }}
+            {{ macros_profile.param_row(
+                'label.customer_password'|trans,
+                macros_button.show_password(customer.password)
+            ) }}
+            {{ macros_profile.param_row('label.expiration_date_from'|trans, customer.fromDate|date('d.m.Y H:i')) }}
+            {{ macros_profile.param_row('label.expiration_date_to'|trans, customer.toDate|date('d.m.Y H:i')) }}
+            {{ macros_profile.param_row(
+                'label.acquisition_fee_paid'|trans,
+                macros_profile.acquisition_fee_paid_button(customer.acquisitionFeePaid)
+            ) }}
+        </div>
+        <div class="col-md-1"></div>
+        <div class="col-md-6">
+            <div class="row-striped-large">
+                {% if catalogDisabled or profile.for1C %}
+                {% else %}
+                    {{ macros_profile.param_row('label.site_domain'|trans, profile.domainName) }}
+
+                    {% if profile.hostingType == 1 %}
+                        {{ macros_profile.param_row(
+                            'label.catalog_hosting'|trans,
+                            'label.catalog_hosting_self'|trans
+                        ) }}
+                    {% else %}
+                        {% if currentCatalogDomain %}
+                            {% set currentCatalogDomainUrl %}
+                                <a href="//{{ currentCatalogDomain }}" target="_blank">{{ currentCatalogDomain }}</a>
+                            {% endset %}
+                        {% else %}
+                            {% set currentCatalogDomainUrl = '-' %}
+                        {% endif %}
+                        {{ macros_profile.param_row('label.catalog_hosting_site'|trans, currentCatalogDomainUrl) }}
+                        {{ macros_profile.param_row('label.backurl'|trans, profile.backUrl) }}
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="row box">
+                <div class="box-body">
+                    <div class="col-md-6 row-striped">
+                        {{ macros_profile.param_row('label.client_name'|trans, profile.client.user.name) }}
+                        {{ macros_profile.param_row('Email', profile.client.user.email) }}
+                        {{ macros_profile.param_row(
+                            'label.account_amount'|trans,
+                            macros_tariff.money(
+                                customer.account.amount,
+                                macros_tariff.account_currency(customer.account)
+                            )
+                        ) }}
+                        {{ macros_profile.param_row(
+                            'label.account_credit'|trans,
+                            macros_tariff.money(
+                                customer.account.credit,
+                                macros_tariff.account_currency(customer.account)
+                            )
+                        ) }}
+                    </div>
+                    <div class="col-md-6 row-striped">
+                        {{ macros_profile.param_row('account', customer.account.id) }}
+                        {{ macros_profile.param_row('customer', customer.id) }}
+                        {{ macros_profile.param_row('state', customer.state) }}
+                        {{ macros_profile.param_row('billingState', customer.billingState) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endspaceless %}{% endmacro %}
+
+{% macro card(profile, isGrantedEdit, isZenith) %}
+    {% import _self as macros_profile %}
+
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4" data-container="profile" data-profile-id="{{ profile.id }}">
+        {{ macros_profile.card_content(profile, isGrantedEdit, isZenith) }}
+    </div>
+{% endmacro %}
+
+{% macro card_content(profile, isGrantedEdit, isZenith) %}
+    {% import _self as macros_profile %}
+    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% set client = profile.client %}
+    {% set customer = profile.customer %}
+    {% set tariffs = customer.customerTariffs %}
+    {% set show_url = path('profile_admin__profile_action', {
+        'clientId': client.id,
+        'profileId': profile.id,
+        'action': 'show'
+    }) %}
+    {% set edit_url = path('profile_admin__profile_action', {
+        'clientId': client.id,
+        'profileId': profile.id,
+        'action': 'edit'
+    }) %}
+
+    <div class="thumbnail">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="row h4">
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        <a href="{{ show_url }}">
+                            <b>{{ profile.name }}</b>
+                        </a>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
+                        {% set class %}{% spaceless %}
+                            {{ macros_profile.customer_status(customer.state, customer.billingState) }}
+                        {% endspaceless %}{% endset %}
+                        <span class="label label-{{ class }}">
+                            {{ macros_profile.customer_status(customer.state, customer.billingState, 'text') }}
+                        </span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="box-body row">
+            <div class="col-md-6 row-striped">
+                <div class="row">
+                    <div class="col-lg-4 text-mute">{{ 'label.customer_login'|trans }}</div>
+                    <div class="col-lg-8 text-info">{{ customer.login }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4 text-mute">{{ 'label.customer_password'|trans }}</div>
+                    <div class="col-lg-8 text-info">{{ macros_button.show_password(customer.password) }}</div>
+                </div>
+            </div>
+            <div class="col-md-6 row-striped">
+                <div class="row">
+                    <div class="col-lg-12 text-mute">{{ 'label.acquisition_fee_paid'|trans }}</div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 text-info">
+                        {{ macros_profile.acquisition_fee_paid_button(customer.acquisitionFeePaid) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box-body row-striped">
+            {{ macros_profile.tariff_cards(tariffs, profile, isZenith) }}
+        </div>
+
+        {% if isGrantedEdit %}
+            <div class="caption">
+                <a href="{{ edit_url }}" class="btn btn-primary">
+                    {{ macros_button.faicon('fa-pencil-square-o') }}
+                    {{ 'button.edit'|trans }}
+                </a>
+
+                {% if customer.state == 'ENABLED' %}
+                    {{ macros_button.confirm(
+                        'button.disable'|trans,
+                        'disable_profile',
+                        'profile',
+                        '',
+                        'fa-lock'
+                    ) }}
+                {% else %}
+                    {{ macros_button.confirm(
+                        'button.enable'|trans,
+                        'enable_profile',
+                        'profile',
+                        '',
+                        'fa-unlock-alt'
+                    ) }}
+                {% endif %}
+                {{ macros_button.confirm(
+                    'button.delete'|trans,
+                    'delete_profile',
+                    'profile',
+                    'btn-danger',
+                    'fa-minus-circle'
+                ) }}
+            </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro tariff_cards(tariffs, profile, isZenith) %}
+    {% import _self as macros_profile %}
+
+    <div class="row" data-container="tariffs">
+        {% for tariff in tariffs %}
+            {% if tariff.replacement != true %}
+                {{ macros_profile.tariff_card(tariff, profile, isZenith) }}
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro tariff_param_row(name, value) %}{% spaceless %}
+    <div class="row">
+        <div class="col-md-6 text-mute">{{ name }}</div>
+        <div class="col-md-6 text-info">{{ value }}</div>
+    </div>
+{% endspaceless %}{% endmacro %}
+
+{% macro tariff_card(tariff, profile, isZenith) %}
+    <div class="col-md-12" data-container="tariff" data-tariff-id="{{ tariff.id }}">
+        {% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+        {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+        {% import _self as macros_profile %}
+        {% set customer = profile.customer %}
+
+        <div class="thumbnail">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="row h4">
+                        <div class="col-md-4">
+                            {{ macros_tariff.name(tariff) }}
+                        </div>
+                        <div class="col-md-8 text-right">
+                            {{ macros_tariff.auto_renewal_button(tariff) }}
+                            &nbsp;
+                            <span class="label {{ macros_tariff.status_bootstrap_class(tariff) }}">
+                            {% if isZenith %}
+                                {{ macros_tariff.tariff_status(tariff) }}
+                            {% else %}
+                                {{ macros_tariff.license_status(tariff) }}
+                            {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="box-body row-striped">
+                {{ macros_profile.tariff_param_row(
+                    'label.feepay_date'|trans, macros_tariff.feepay_date(tariff)
+                ) }}
+                {% if macros_tariff.is_deactivation_date(tariff) == 'true' %}
+                    {{ macros_profile.tariff_param_row(
+                        'label.deactivation_date'|trans, macros_tariff.deactivation_date(tariff)
+                    ) }}
+                {% else %}
+                    {{ macros_profile.tariff_param_row(
+                        'label.pay_date'|trans, macros_tariff.pay_date(tariff)
+                    ) }}
+                {% endif %}
+                {% if profile.for1C and not isZenith %}
+                    {{ macros_profile.tariff_param_row(
+                        'label.number_of_workplaces'|trans, macros_tariff.multiplier(tariff, customer)
+                    ) }}
+                {% endif %}
+                {{ macros_profile.tariff_param_row(
+                    'label.subscription_price'|trans,
+                    macros_tariff.subscription_price_with_multiplier(tariff, customer)
+                ) }}
+                {{ macros_profile.tariff_param_row(
+                    'label.period'|trans, macros_tariff.period(tariff)
+                ) }}
+                {% if not isZenith %}
+                    {{ macros_profile.tariff_param_row(
+                        'label.when_requests_are_exceeded'|trans,
+                        macros_tariff.when_requests_are_exceeded(tariff, customer)
+                    ) }}
+                    {{ macros_profile.tariff_param_row(
+                        'label.remaining_queries'|trans, macros_tariff.remaining_queries(tariff)
+                    ) }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endmacro %}

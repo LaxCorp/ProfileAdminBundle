@@ -1,0 +1,27 @@
+{
+  "name": "laxcorp/profile-admin-bundle",
+  "description": "LaxCorp billing profile admin",
+  "type": "symfony-bundle",
+  "homepage": "https://github.com/LaxCorp/ProfileAdminBundle",
+  "license": "MIT",
+  "minimum-stability": "stable",
+  "authors": [
+    {
+      "name": "Lax Corp",
+      "email": "LaxCorp@mail.ru"
+    }
+  ],
+  "require": {
+    "php": "^7.0",
+    "symfony/symfony": "^3.0",
+    "doctrine/orm": "^2.5",
+    "doctrine/doctrine-bundle": "^1.6"
+  },
+  "suggest": {
+  },
+  "autoload": {
+    "psr-4": {
+      "LaxCorp\\ProfileAdminBundle\\": ""
+    }
+  }
+}

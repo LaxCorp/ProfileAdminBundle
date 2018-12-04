@@ -1,0 +1,72 @@
+{% trans_default_domain 'profile_admin' %}
+{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+{% import 'ProfileAdminBundle:macros:profile.html.twig' as macros_profile %}
+
+{% if isZenith %}
+    {% set title = 'jobs'|trans %}
+    {% set tab_title = 'jobs_list'|trans %}
+{% else %}
+    {% set title = 'profiles'|trans %}
+    {% set tab_title = 'profiles_list'|trans %}
+{% endif %}
+
+<div class="sonata-ba-show">
+    <div class="sonata-ba-view">
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active">
+                    <a href="#tab_list" class="changer-tab" aria-controls="tab_info"
+                       data-toggle="tab" aria-expanded="true">
+                        {{ tab_title }}
+                    </a>
+                </li>
+                <li>
+                    <a href="#tab_info" class="changer-tab" aria-controls="tab_list"
+                       data-toggle="tab" aria-expanded="false">
+                        {{ 'label.info'|trans }}
+                    </a>
+                </li>
+                {% if isGrantedEdit %}
+                    {% if isZenith %}
+                        <li>
+                            <a href="{{ path('profile_admin__create_profile', {'clientId': client.id}) }}"
+                               class="btn btn-primary">{{ 'profile.create_new_job'|trans }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li>
+                            <a href="{{ path('profile_admin__create_profile', {'clientId': client.id}) }}"
+                               class="btn btn-primary">{{ 'profile.create_new'|trans }}
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ path('profile_admin__create_profile_for1c', {
+                                'clientId': client.id,
+                                'for1c': 'for1c'
+                            }) }}" class="btn btn-primary">{{ 'profile.create_new_for1c'|trans }}
+                            </a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade active in" id="tab_list">
+                    <div class="box-body container-fluid">
+                        <div class="sonata-ba-collapsed-fields">
+                            {% include 'ProfileAdminBundle:profile:profiles.html.twig' %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade in" id="tab_info">
+                    <div class="box-body container-fluid">
+                        <div class="sonata-ba-collapsed-fields">
+                            {% include 'ProfileAdminBundle:profile:tab_list_info.html.twig' %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

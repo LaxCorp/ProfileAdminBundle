@@ -1,0 +1,129 @@
+number_sign: №
+jobs: Рабочие места
+jobs_list: Список рабочих мест
+profiles: Профили
+profiles_list: Список профилей
+pluralize:
+    days: День|Дня|Дней
+expection:
+    error: Ошибка
+    client:
+        not_found: Клиент не существует
+    profile:
+        not_found: Профиль не существует
+    access_denied: Доступ запрещен
+profile:
+    create_new: Создать новый профиль для сайта
+    create_new_for1c: Создать новый профиль для 1C
+    create_new_job: Создать новые рабочие места
+    edit: Редактировать профиль
+    edit_job: Редактировать рабочее место
+choice:
+    domain_main: На нашем домене
+    domain_own: На домене клиента
+    hosting_main: Laximo
+    hosting_own: Собственный
+    state_disabled: Заблокирован
+    state_enabled: Включен
+customer_status:
+    active: Активен
+    billing_disabled: Заблокирован системой
+    paid_resources_only: 'Ограничен\: только оплаченные ресурсы'
+    restricted: Ограничен системой
+    client_blocked: Заблокирован клиентом
+label:
+    absent: Отсутствует
+    access_permission: Права доступа
+    account_amount: Остаток
+    account_credit: Кредитный лимит
+    acquisition_fee_paid: Платеж за подключение
+    acquisition_price: Стоимость подключения
+    add_license_choose: Выберите лицензию
+    add_tariff_choose: Выберите тариф
+    auto_renewal: Авт. списание
+    backurl: BackURL
+    catalog_domain: Домен каталогов
+    catalog_hosting: Хостинг каталогов
+    catalog_hosting_self: Собственный
+    catalog_hosting_site: Действующий сайт каталогов
+    change_variant_choose: Выберите вариант для смены
+    client_name: Клиент Ф.И.О
+    create_with_licenses: Создать с лицензиями
+    create_with_tariffs: Создать с тарифами
+    customer_login: Логин
+    customer_password: Код доступа
+    customer_state: Состояние
+    deactivation_date: Дата отключения
+    disabling_service: Отключение сервиса
+    expiration_date_from: Дата начала срока действия
+    expiration_date_to: Дата истечения срока действия
+    feepay_date: Дата посл. списания
+    fqdn: Полное доменное имя каталогов
+    in: В
+    info: Информация
+    not_limited: Не ограничено
+    number_of_requests: Кол-во запросов
+    number_of_workplaces: Кол-во рабочих мест
+    open_new_window: Открывать в новом окне
+    pay_date: Дата сл. списания
+    period: Срок действия
+    profile_name: Наименование
+    purchased_licenses: Приобретенные лицензии
+    purchased_tariffs: Приобретенные тарифы
+    remaining_queries: Осталось запросов
+    request: Запрос
+    site_domain: Домен cайта, для внедрения сервиса
+    state: Статус
+    subscription_price: Абонентская плата
+    when_requests_are_exceeded: При превышении запросов
+placeholder:
+    site_domain: your.site.com
+    url_template: URL-шаблон http://your.site.com/basket/?article={article}&brand={brand}
+    auto: Автоматически
+tariff_status:
+    active: Активный
+    deleted: Удалён
+    disabled: Заблокирован
+    planned: Запланирован
+    restricted: Ограничен
+license_status:
+    active: Активна
+    deleted: Удалена
+    disabled: Заблокирована
+    planned: Запланирована
+    restricted: Ограничена
+period:
+    month: Месяц
+    on_1st_month: 1е месяца
+button:
+    add_license: Добавить лицензию
+    add_tariff: Добавить тариф
+    auto_renewal_off: Отключть автосписание
+    auto_renewal_on: Включть автосписание
+    change: Сменить
+    change_license: Смена лицензии
+    change_tariff: Смена тарифа
+    delete_license: Удалить лицензию
+    delete_tariff: Удалить тариф
+    delete_profile: Удалить
+    no: Нет
+    pwgen: Сгенерировать
+    save: Сохранить
+    undo_change_license: Отменить смену лицензии
+    undo_change_tariff: Отменить смену тарифа
+    yes: Да
+    disable: Заблокировать
+    enable: Включить
+    delete: Удалить
+    edit: Редактировать
+    show: Показать
+confirm:
+    are_you_sure: Вы уверенны?
+messages:
+    insufficient_rights: Недостаточно прав
+    job_success_create: Создано новое рабочеее место
+    job_success_delete: Удалено рабочеее место
+    no_need_to_add_license: Нет необходимости добавлять лицензии
+    no_need_to_add_tariff: Нет необходимости добавлять тариф
+    profile_success_create: Создан новый профиль
+    profile_success_delete: Удален профиль

@@ -1,0 +1,1048 @@
+{% trans_default_domain 'profile_admin' %}
+
+{% macro account_currency(account) %}{% spaceless %}
+    {{ account.currency.format }}
+{% endspaceless %}{% endmacro %}
+
+{% macro money(decimal, account_currency) %}{% spaceless %}
+    {% if decimal !=0 %}
+        {{ decimal|localizedcurrency(account_currency) }}
+    {% else %}
+        {{ 0.00|localizedcurrency(account_currency) }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro money_empty_text(decimal, text, account_currency) %}{% spaceless %}
+    {% if decimal !=0 %}
+        {{ decimal|localizedcurrency(account_currency) }}
+    {% else %}
+        {{ text }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro name(tariff) %}
+    {% import _self as macros_tariff %}
+
+    {% if tariff.replacement is not defined or tariff.replacement != true %}
+        {% if tariff.replaceChild is defined and tariff.replaceChild and tariff.name != tariff.replaceChild.name %}
+            {{ macros_tariff.compare_row(tariff.name|default('Error'), tariff.replaceChild.name|default('Error')) }}
+        {% else %}
+            {{ tariff.name|default('Error') }}
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro tariff_status(tariff) %}{% spaceless %}
+    {% set state  = tariff.state %}
+    {% set active = tariff.active %}
+
+    {% if state == 'ENABLED' and active == true %}
+        {{ 'tariff_status.active'|trans }}
+    {% endif %}
+    {% if state == 'ENABLED' and active == false %}
+        {{ 'tariff_status.planned'|trans }}
+    {% endif %}
+    {% if state == 'DISABLED' %}
+        {{ 'tariff_status.disabled'|trans }}
+    {% endif %}
+    {% if state == 'RESTRICTED' %}
+        {{ 'tariff_status.restricted'|trans }}
+    {% endif %}
+    {% if state == 'DELETED' %}
+        {{ 'tariff_status.deleted'|trans }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro license_status(tariff) %}{% spaceless %}
+    {% set state  = tariff.state %}
+    {% set active = tariff.active %}
+
+    {% if state == 'ENABLED' and active == true %}
+        {{ 'license_status.active'|trans }}
+    {% endif %}
+    {% if state == 'ENABLED' and active == false %}
+        {{ 'license_status.planned'|trans }}
+    {% endif %}
+    {% if state == 'DISABLED' %}
+        {{ 'license_status.disabled'|trans }}
+    {% endif %}
+    {% if state == 'RESTRICTED' %}
+        {{ 'license_status.restricted'|trans }}
+    {% endif %}
+    {% if state == 'DELETED' %}
+        {{ 'license_status.deleted'|trans }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro status_bootstrap_class(tariff) %}{% spaceless %}
+    {% set state  = tariff.state %}
+    {% set active = tariff.active %}
+
+    {% set ok_class = "label-success" %}
+    {% set problem_class = "label-warning" %}
+    {% set error_class = "label-danger" %}
+
+    {% if state == 'ENABLED' and active == true %}
+        {{ ok_class }}
+    {% endif %}
+    {% if state == 'ENABLED' and active == false %}
+        {{ problem_class }}
+    {% endif %}
+    {% if state == 'DISABLED' %}
+        {{ error_class }}
+    {% endif %}
+    {% if state == 'RESTRICTED' %}
+        {{ problem_class }}
+    {% endif %}
+    {% if state == 'DELETED' %}
+        {{ error_class }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro auto_renewal_button(tariff) %}
+    {% import _self as macros_tariff %}
+    {% import 'ProfileAdminBundle:macros:button.html.twig' as macros_button %}
+
+    {% set checked = false %}
+    {% if tariff.replacement != true %}
+        {% if tariff.replaceChild %}
+            {% set checked = tariff.replaceChild.autoRenewal %}
+        {% else %}
+            {% set checked = tariff.autoRenewal %}
+        {% endif %}
+    {% endif %}
+    {% if checked %}
+        <span class="label label-success">
+            {{ macros_button.faicon('fa-check-square-o') }}
+            {{ 'label.auto_renewal'|trans }}
+        </span>
+    {% else %}
+        <span class="label label-default">
+            {{ macros_button.faicon('fa-toggle-off') }}
+            {{ 'label.auto_renewal'|trans }}
+        </span>
+    {% endif %}
+
+
+{% endmacro %}
+
+{% macro plural_days(count) %}{% spaceless %}
+    {{ 'pluralize.days'|transchoice(count) }}
+{% endspaceless %}{% endmacro %}
+
+{% macro period(tariff) %}
+    {% import _self as macros_tariff %}
+
+    {% set old = macros_tariff.period_map(tariff) %}
+    {% set new = old %}
+    {% if tariff.replaceChild is defined and tariff.replaceChild %}
+        {% set new = macros_tariff.period_map(tariff.replaceChild) %}
+    {% endif %}
+    {% if old != new %}
+        {{ macros_tariff.compare_row(old, new) }}
+    {% else %}
+        {{ old }}
+    {% endif %}
+{% endmacro %}
+
+{% macro period_map(tariff) %}{% spaceless %}
+    {% import _self as macros_tariff %}
+
+    {% if tariff and tariff.billingPeriod is defined %}
+        {% set billingPeriod = tariff.billingPeriod %}
+    {% else %}
+        {% set billingPeriod = null %}
+    {% endif %}
+
+    {% if tariff and tariff.customBillingPeriodDays is defined %}
+        {% set customBillingPeriodDays = tariff.customBillingPeriodDays %}
+    {% else %}
+        {% set customBillingPeriodDays = null %}
+    {% endif %}
+
+    {% if billingPeriod == 'CUSTOM' and customBillingPeriodDays %}
+        {% set days = customBillingPeriodDays %}
+        {{ macros_tariff.plural_days(days) }}
+    {% else %}
+        {% set days = 0 %}
+    {% endif %}
+
+    {% if billingPeriod == 'DAY' and not days %}
+        {{ macros_tariff.plural_days(1)|lower }}
+    {% endif %}
+    {% if billingPeriod == 'MONTH' and not days %}
+        {{ 'period.month'|trans|lower }}
+    {% endif %}
+    {% if billingPeriod == 'ALLIGNED_MONTH' and not days %}
+        {{ 'period.on_1st_month'|trans|lower }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro serv_period_map(service) %}{% spaceless %}
+    {% import _self as macros_tariff %}
+
+    {% if service and service.billingPeriod is defined %}
+        {% set billingPeriod = service.billingPeriod %}
+    {% else %}
+        {% set billingPeriod = null %}
+    {% endif %}
+
+    {% if service and service.customBillingPeriodDays is defined %}
+        {% set customBillingPeriodDays = service.customBillingPeriodDays %}
+    {% else %}
+        {% set customBillingPeriodDays = null %}
+    {% endif %}
+
+    {% if billingPeriod == 'CUSTOM' and customBillingPeriodDays %}
+        {% set days = customBillingPeriodDays %}
+        {{ macros_tariff.plural_days(days) }}
+    {% else %}
+        {% set days = 0 %}
+    {% endif %}
+
+    {% if billingPeriod == 'DAY' and not days %}
+        {{ macros_tariff.plural_days(1)|lower }}
+    {% endif %}
+    {% if billingPeriod == 'MONTH' and not days %}
+        {{ 'period.month'|trans|lower }}
+    {% endif %}
+    {% if billingPeriod == 'ALLIGNED_MONTH' and not days %}
+        {{ 'period.on_1st_month'|trans|lower }}
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro feepay_date(tariff) %}
+    {% if tariff.subscriptionDate is defined and tariff.subscriptionDate is not null %}
+        {{ tariff.subscriptionDate|date("d.m.Y H:i") }}
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}
+
+{% macro pay_date(tariff) %}
+    {% if tariff.state == 'ENABLED' %}
+        {% if tariff.tarificationDate is defined and tariff.tarificationDate is not null %}
+            {{ tariff.tarificationDate|date("d.m.Y H:i") }}
+        {% elseif tariff.deactivationDate is defined and tariff.replaceChild %}
+            {{ tariff.deactivationDate|date("d.m.Y H:i") }}
+        {% elseif tariff.activationDate is defined and tariff.activationDate is not null %}
+            {{ tariff.activationDate|date("d.m.Y H:i") }}
+        {% else %}
+            -
+        {% endif %}
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}
+
+{% macro is_replaced(tariff) %}{% spaceless %}
+    {% if tariff.replaceChild is defined and tariff.replaceChild is not null %}
+        true
+    {% else %}
+        false
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro is_deactivation_date(tariff) %}{% spaceless %}
+    {% import _self as macros_tariff %}
+
+    {% set isReplaced = macros_tariff.is_replaced(tariff)=='true' %}
+
+    {% if tariff.state == 'ENABLED' %}
+        {% if tariff.deactivationDate is defined and tariff.deactivationDate is not null and not isReplaced %}
+            true
+        {% elseif isReplaced and not tariff.replaceChild.autoRenewal %}
+            true
+        {% else %}
+            false
+        {% endif %}
+    {% else %}
+        false
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro deactivation_date(tariff) %}
+    {% import _self as macros_tariff %}
+    {% if macros_tariff.is_deactivation_date(tariff) == 'true' %}
+        {% if macros_tariff.is_replaced(tariff) == 'true' %}
+            {{ tariff.replaceChild.deactivationDate|date("d.m.Y H:i") }}
+        {% else %}
+            {{ tariff.deactivationDate|date("d.m.Y H:i") }}
+        {% endif %}
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}
+
+{% macro subscription_price(tariff, customer) %}
+    {% import _self as macros_tariff %}
+
+    {% if tariff.replaceChild is defined and tariff.replaceChild and tariff.subscriptionPrice != tariff.replaceChild.subscriptionPrice %}
+        {{ macros_tariff.compare_row(
+            macros_tariff.money(tariff.subscriptionPrice, macros_tariff.account_currency(customer.account)),
+            macros_tariff.money(tariff.replaceChild.subscriptionPrice, macros_tariff.account_currency(customer.account))
+        ) }}
+    {% else %}
+        {{ macros_tariff.money(tariff.subscriptionPrice, macros_tariff.account_currency(customer.account)) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro subscription_price_with_multiplier(tariff, customer) %}
+    {% import _self as macros_tariff %}
+    {% set oldPrice = tariff.subscriptionPrice * tariff.multiplier %}
+
+    {% if tariff.replaceChild %}
+        {% set newPrice = tariff.replaceChild.subscriptionPrice * tariff.replaceChild.multiplier %}
+    {% else %}
+        {% set newPrice = oldPrice %}
+    {% endif %}
+
+    {% if oldPrice != newPrice %}
+        {{ macros_tariff.compare_row(
+            macros_tariff.money(oldPrice, macros_tariff.account_currency(customer.account)),
+            macros_tariff.money(newPrice, macros_tariff.account_currency(customer.account))
+        ) }}
+    {% else %}
+        {{ macros_tariff.money(oldPrice, macros_tariff.account_currency(customer.account)) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro multiplier(tariff, customer) %}
+    {% import _self as macros_tariff %}
+
+    {% if tariff.replaceChild is defined and tariff.replaceChild and tariff.replaceChild.multiplier is defined
+        and tariff.multiplier != tariff.replaceChild.multiplier %}
+        {{ macros_tariff.compare_row(tariff.multiplier, tariff.replaceChild.multiplier) }}
+    {% else %}
+        {{ tariff.multiplier|default(1) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro when_requests_are_exceeded(tariff, customer) %}
+    {% import _self as macros_tariff %}
+    {% set oldReq = macros_tariff.requests_are_exceeded(tariff, customer) %}
+    {% set newReq = oldReq %}
+    {% if tariff.replaceChild is defined and tariff.replaceChild %}
+        {% set newReq = macros_tariff.requests_are_exceeded(tariff.replaceChild, customer) %}
+    {% endif %}
+    {% if oldReq != newReq %}
+        {{ macros_tariff.compare_row(oldReq, newReq) }}
+    {% else %}
+        {{ oldReq }}
+    {% endif %}
+{% endmacro %}
+
+{% macro requests_are_exceeded(tariff, customer) %}
+    {% import _self as macros_tariff %}
+    {% import 'AppBundle:macros:code_text_maps.html.twig' as ctmap %}
+    {% spaceless %}
+        {% set overClickTariff = false %}
+        {% for serviceTariff in tariff.serviceTariffs %}
+            {% set overuseClickPrice = serviceTariff.overuseClickPrice %}
+            {% if overuseClickPrice %}
+                {% set overClickTariff = true %}
+                <div>{% spaceless %}
+                        {{ macros_tariff.money(
+                            serviceTariff.overuseClickPrice, macros_tariff.account_currency(customer.account)
+                        ) }}
+                        {% spaceless %}
+                            / {{ 'label.request'|trans|lower }}
+                            {{ ctmap.service_map(serviceTariff.service.code) }}
+                        {% endspaceless %}
+                    {% endspaceless %}</div>
+            {% else %}
+                {% if overClickTariff == false %}
+                    {{ 'label.disabling_service'|trans|lower }}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endspaceless %}
+{% endmacro %}
+
+{% macro remaining_queries(tariff) %}
+    {% import 'AppBundle:macros:code_text_maps.html.twig' as ctmap %}
+    {% import _self as macros_tariff %}
+    {% set oldAvailableClicksCount = 0 %}
+    {% set newAvailableClicksCount = 0 %}
+    {% set oldServiceTariffs %}
+        {% for serv in tariff.serviceTariffs %}
+            {% set oldAvailableClicksCount = oldAvailableClicksCount + serv.availableClicksCount %}
+            <div>
+                {% if serv.unlimited == true %}
+                    {{ 'label.not_limited'|trans|lower }}
+                {% else %}
+                    {{ ctmap.service_map(serv.service.code,
+                        ' '~'label.in'|trans|lower~' '~macros_tariff.serv_period_map(serv)~': ') }}&nbsp;
+                    {% if serv.availableClicksCount is defined %}
+                        {{ (serv.availableClicksCount-serv.usedClicksCount)|number_format(0, '', ' ') }} /
+                        {{ serv.availableClicksCount|number_format(0, '', ' ') }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endset %}
+
+    {% if tariff.replaceChild %}
+        {% set newServiceTariffs %}
+            {% for serv in tariff.replaceChild.serviceTariffs %}
+                {% set newAvailableClicksCount =  newAvailableClicksCount + serv.availableClicksCount %}
+                <div>
+                    {% if serv.unlimited == true %}
+                        {{ 'label.not_limited'|trans|lower }}
+                    {% else %}
+                        {{ ctmap.service_map(serv.service.code,
+                            ' '~'label.in'|trans|lower~' '~macros_tariff.serv_period_map(serv)~':') }}&nbsp;
+                        {% if serv.availableClicksCount is defined %}
+                            {{ (serv.availableClicksCount-serv.usedClicksCount)|number_format(0, '', ' ') }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endset %}
+    {% endif %}
+
+    {% if tariff.replaceChild and oldAvailableClicksCount != newAvailableClicksCount %}
+        {{ macros_tariff.compare_row(oldServiceTariffs, newServiceTariffs) }}
+    {% else %}
+        {{ oldServiceTariffs }}
+    {% endif %}
+{% endmacro %}
+
+{% macro number_of_requests(tariff, customer) %}
+    {% import 'AppBundle:macros:code_text_maps.html.twig' as ctmap %}
+    {% import _self as macros_tariff %}
+
+    {% set oldClicksCount = 0 %}
+    {% set newClicksCount = 0 %}
+    {% set oldServiceTariffs %}
+        {% for serv in tariff.serviceTariffs %}
+            {% set oldClicksCount = oldClicksCount + serv.clicksCount * tariff.multiplier %}
+            <div>
+                {% if serv.unlimited == true %}
+                    {{ 'label.not_limited'|trans|lower }}
+                {% else %}
+                    {{ ctmap.service_map(serv.service.code,
+                        ' '~'label.in'|trans|lower~' '~macros_tariff.serv_period_map(serv)~': ') }}&nbsp;
+                    {% if serv.clicksCount is defined %}
+                        {{ serv.clicksCount * tariff.multiplier|number_format(0, '', ' ') }}
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endset %}
+
+    {% if tariff.replaceChild is defined and tariff.replaceChild %}
+        {% set newServiceTariffs %}
+            {% for serv in tariff.replaceChild.serviceTariffs %}
+                {% set newClicksCount =  newClicksCount + serv.clicksCount * tariff.replaceChild.multiplier %}
+                <div>
+                    {% if serv.unlimited == true %}
+                        {{ 'label.not_limited'|trans|lower }}
+                    {% else %}
+                        {{ ctmap.service_map(serv.service.code,
+                            ' '~'label.in'|trans|lower~' '~macros_tariff.serv_period_map(serv)~':') }}&nbsp;
+                        {% if serv.clicksCount is defined %}
+                            {{ serv.clicksCount * tariff.replaceChild.multiplier|number_format(0, '', ' ') }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        {% endset %}
+    {% endif %}
+
+    {% if tariff.replaceChild is defined and tariff.replaceChild and oldClicksCount != newClicksCount %}
+        {{ macros_tariff.compare_row(oldServiceTariffs, newServiceTariffs) }}
+    {% else %}
+        {{ oldServiceTariffs }}
+    {% endif %}
+
+{% endmacro %}
+
+{% macro acquisition_price(tariff, customer) %}
+    {% import _self as macros_tariff %}
+
+    {% set currencyStr = macros_tariff.account_currency(customer.account) %}
+
+    {# Current tariff acquisition price #}
+    {% set price = 0 %}
+    {% for serviceTariff in tariff.serviceTariffs %}
+        {% set price = price + serviceTariff.acquisitionPrice %}
+    {% endfor %}
+
+    {% set priceStr %}
+        {{ macros_tariff.money_empty_text(
+            price, 'label.absent'|trans|lower, macros_tariff.account_currency(customer.account)
+        ) }}
+    {% endset %}
+
+    {% if tariff.replaceChild is defined and tariff.replaceChild %}
+
+        {# New tariff acquisition price #}
+        {% set replacePrice = 0 %}
+        {% for serviceTariff in tariff.replaceChild.serviceTariffs %}
+            {% set replacePrice = replacePrice + serviceTariff.acquisitionPrice %}
+        {% endfor %}
+
+        {# New tariff acquisition price with discount #}
+        {% set isDiscount = false %}
+        {% set discountPrice = 0 %}
+        {% for serviceTariff in tariff.replaceChild.serviceTariffs %}
+            {% for acquisitionFeePaid in customer.acquisitionFeePaid %}
+                {% if acquisitionFeePaid.service_id == serviceTariff.service.id %}
+                    {% set discount = serviceTariff.acquisitionPrice - acquisitionFeePaid.amount %}
+                    {% set isDiscount = true %}
+                    {% if discount > 0 %}
+                        {% set discountPrice = discountPrice + discount %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
+        {% if isDiscount == false %}
+            {% set discountPrice = replacePrice %}
+        {% endif %}
+
+        {% set replacePriceStr %}
+            {% if replacePrice != discountPrice %}
+                <del class="margin-r-5">
+                    {{ macros_tariff.money_empty_text(
+                        replacePrice, 'label.absent'|trans|lower,macros_tariff.account_currency(customer.account)
+                    ) }}
+                </del>
+            {% endif %}
+            {{ macros_tariff.money_empty_text(
+                discountPrice, 'label.absent'|trans|lower, macros_tariff.account_currency(customer.account)
+            ) }}
+        {% endset %}
+
+        {% if price != discountPrice %}
+            <div>{{ macros_tariff.compare_row(priceStr, replacePriceStr) }}</div>
+        {% else %}
+            <div>{{ priceStr }}</div>
+        {% endif %}
+    {% else %}
+        <div>{{ priceStr }}</div>
+    {% endif %}
+{% endmacro %}
+
+{% macro service_permissions(permission) %}{% spaceless %}
+    {% if permission.servicePermissions is defined %}
+        {% for service_permissions in permission.servicePermissions %}
+            {% if loop.first %}:{% else %},{% endif %} {{ service_permissions.service.name }}
+        {% endfor %}
+    {% else %}
+        -
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro resource_permissions(permission) %}{% spaceless %}
+    {% if permission.servicePermissions is defined %}
+        {% set count = 0 %}
+        {% for service_permissions in permission.servicePermissions %}
+            {% for resource_permissions in service_permissions.resourcePermissions %}
+                {% if resource_permissions.fullAccess %}
+                    {{ resource_permissions.resource.name }}
+                    {% set count = count + 1 %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        <span class="badge">{{ count }}</span>
+    {% else %}
+        -
+    {% endif %}
+{% endspaceless %}{% endmacro %}
+
+{% macro button_permissions(permission, uniquePrefix) %}
+    {% import _self as macros_tariff %}
+    {% set id = uniquePrefix~'_'~permission.id %}
+    <button type="button" data-toggle="collapse" data-target="#{{ id }}" class="btn btn-sm btn-success">
+        {{ permission.name }}{{ macros_tariff.service_permissions(permission)|raw }}
+    </button>
+    <div id="{{ id }}" class="collapse">
+        {{ macros_tariff.resource_permissions(permission) }}
+    </div>
+{% endmacro %}
+
+{% macro tariff_permissions(tariff, prefix) %}
+    {% import _self as macros_tariff %}
+
+    {% if prefix is not defined %}
+        {% set prefix = '' %}
+    {% endif %}
+
+    {% set currentPermsId = [] %}
+    {% set replacePermsId = [] %}
+    {% set currentPerms = '' %}
+    {% set replacePerms = '' %}
+    {% set isDiffer = false %}
+
+    {% if tariff.templatePermissions is defined %}
+        {% for permission in tariff.templatePermissions %}
+            {% set currentPermsId = currentPermsId|merge([permission.id]) %}
+            {% set uniquePrefix = prefix ~ 'templperms_'~tariff.id~'_'~'now'|date('U') %}
+            {% set currentPerms = currentPerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+        {% endfor %}
+    {% endif %}
+
+    {% if tariff.customerTariffPermissions is defined %}
+        {% for permission in tariff.customerTariffPermissions %}
+            {% set currentPermsId = currentPermsId|merge([permission.id]) %}
+            {% set uniquePrefix = prefix ~ 'custtarperms_'~tariff.id~'_'~'now'|date('U') %}
+            {% set currentPerms = currentPerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+        {% endfor %}
+    {% endif %}
+
+    {% if tariff.tariff is defined %}
+        {% set ttariff = tariff.tariff %}
+    {% else %}
+        {% set ttariff = null %}
+    {% endif %}
+
+    {% if ttariff and ttariff.templatePermissions is defined %}
+        {% for permission in ttariff.templatePermissions %}
+            {% set currentPermsId = currentPermsId|merge([permission.id]) %}
+            {% set uniquePrefix = prefix ~ 'ttemplperms_'~tariff.id~'_'~'now'|date('U') %}
+            {% set currentPerms = currentPerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+        {% endfor %}
+    {% endif %}
+
+    {% if tariff.replaceChild is defined and tariff.replaceChild %}
+        {% if tariff.replaceChild.templatePermissions is defined %}
+            {% for permission in tariff.replaceChild.templatePermissions %}
+                {% set replacePermsId = replacePermsId|merge([permission.id]) %}
+                {% set uniquePrefix = prefix ~ 'retemplperms_'~tariff.id~'_'~'now'|date('U') %}
+                {% set replacePerms = replacePerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+            {% endfor %}
+        {% endif %}
+
+        {% if tariff.replaceChild.customerTariffPermissions is defined %}
+            {% for permission in tariff.replaceChild.customerTariffPermissions %}
+                {% set replacePermsId = replacePermsId|merge([permission.id]) %}
+                {% set uniquePrefix = prefix ~ 'recusttarperms_'~tariff.id~'_'~'now'|date('U') %}
+                {% set replacePerms = replacePerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+            {% endfor %}
+        {% endif %}
+
+        {% if tariff.replaceChild.tariff is defined %}
+            {% set rettariff = tariff.replaceChild.tariff %}
+        {% else %}
+            {% set rettariff = null %}
+        {% endif %}
+
+        {% if rettariff and rettariff.templatePermissions is defined %}
+            {% for permission in rettariff.templatePermissions %}
+                {% set replacePermsId = replacePermsId|merge([permission.id]) %}
+                {% set uniquePrefix = prefix ~ 'rettemplperms_'~tariff.id~'_'~'now'|date('U') %}
+                {% set replacePerms = replacePerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+            {% endfor %}
+        {% endif %}
+
+        {% if currentPermsId != replacePermsId %}
+            {% set isDiffer = true %}
+        {% endif %}
+    {% endif %}
+
+    <div class="tariff-permissions-buttons">
+        {% if isDiffer %}
+            {{ macros_tariff.compare_row(currentPerms, replacePerms) }}
+        {% else %}
+            {{ currentPerms|raw }}
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro param_row(name, value) %}{% spaceless %}
+    {% import _self as macros_tariff %}
+    <div class="row">
+        <div class="col-lg-4 text-mute">{{ name }}</div>
+        <div class="col-lg-8 text-info">{{ value }}</div>
+    </div>
+{% endspaceless %}{% endmacro %}
+
+{% macro compare_row(left, right) %}{% spaceless %}
+    {% import _self as macros_tariff %}
+    <div class="compare-row">
+        <div>{{ left|raw }}</div>
+        <div class="compare-row-arrow glyphicon glyphicon-arrow-right"></div>
+        <div>{{ right|raw }}</div>
+    </div>
+{% endspaceless %}{% endmacro %}
+
+{% macro card(tariff, customer, profile, isGrantedEdit, isZenith) %}
+    {% import _self as macros_tariff %}
+
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4" data-container="tariff" data-tariff-id="{{ tariff.id }}">
+        {{ macros_tariff.card_content(tariff, customer, profile, isGrantedEdit, isZenith) }}
+    </div>
+{% endmacro %}
+
+{% macro card_content(tariff, customer, profile, isGrantedEdit, isZenith) %}
+    {% import _self as macros_tariff %}
+    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+
+    <div class="thumbnail">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="row h4">
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        {{ macros_tariff.name(tariff) }}
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
+                        {{ macros_tariff.auto_renewal_button(tariff) }}
+                        &nbsp;
+                        <span class="label {{ macros_tariff.status_bootstrap_class(tariff) }}">
+                            {% if isZenith %}
+                                {{ macros_tariff.tariff_status(tariff) }}
+                            {% else %}
+                                {{ macros_tariff.license_status(tariff) }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="box-body row-striped">
+            {{ macros_tariff.param_row(
+                'label.access_permission'|trans, macros_tariff.tariff_permissions(tariff)
+            ) }}
+            {{ macros_tariff.param_row(
+                'label.feepay_date'|trans, macros_tariff.feepay_date(tariff)
+            ) }}
+            {% if macros_tariff.is_deactivation_date(tariff) == 'true' %}
+                {{ macros_tariff.param_row(
+                    'label.deactivation_date'|trans, macros_tariff.deactivation_date(tariff)
+                ) }}
+            {% else %}
+                {{ macros_tariff.param_row(
+                    'label.pay_date'|trans, macros_tariff.pay_date(tariff)
+                ) }}
+            {% endif %}
+            {% if profile.for1C and not isZenith %}
+                {{ macros_tariff.param_row(
+                    'label.number_of_workplaces'|trans, macros_tariff.multiplier(tariff, customer)
+                ) }}
+            {% endif %}
+            {{ macros_tariff.param_row(
+                'label.subscription_price'|trans, macros_tariff.subscription_price_with_multiplier(tariff, customer)
+            ) }}
+            {{ macros_tariff.param_row(
+                'label.period'|trans, macros_tariff.period(tariff)
+            ) }}
+            {% if not isZenith %}
+                {{ macros_tariff.param_row(
+                    'label.when_requests_are_exceeded'|trans, macros_tariff.when_requests_are_exceeded(tariff, customer)
+                ) }}
+                {{ macros_tariff.param_row(
+                    'label.remaining_queries'|trans, macros_tariff.remaining_queries(tariff)
+                ) }}
+            {% endif %}
+            {{ macros_tariff.param_row(
+                'label.acquisition_price'|trans, macros_tariff.acquisition_price(tariff, customer)
+            ) }}
+        </div>
+
+        <div class="caption">
+            {% if isGrantedEdit %}
+                {% set autoRenewal = false %}
+                {% if tariff.replacement != true %}
+                    {% if tariff.replaceChild %}
+                        {% set autoRenewal = tariff.replaceChild.autoRenewal %}
+                    {% else %}
+                        {% set autoRenewal = tariff.autoRenewal %}
+                    {% endif %}
+                {% endif %}
+                {% if autoRenewal %}
+                    {{ macros_button.confirm(
+                        'button.auto_renewal_off'|trans,
+                        'auto_renewal_off',
+                        'tariff',
+                        '',
+                        'fa-toggle-off'
+                    ) }}
+                {% else %}
+                    {{ macros_button.confirm(
+                        'button.auto_renewal_on'|trans,
+                        'auto_renewal_on',
+                        'tariff',
+                        '',
+                        'fa-toggle-on'
+                    ) }}
+                {% endif %}
+
+                {% if tariff.replaceChild %}
+                    {% if isZenith %}
+                        {% set button_text = 'button.undo_change_tariff'|trans %}
+                    {% else %}
+                        {% set button_text = 'button.undo_change_license'|trans %}
+                    {% endif %}
+                    {{ macros_button.confirm(
+                        button_text,
+                        'undo_change_tariff',
+                        'tariff',
+                        '',
+                        'fa-undo'
+                    ) }}
+                {% endif %}
+
+                {% if tariff.state == 'DISABLED' or tariff.state == 'RESTRICTED' %}
+                    {% if isZenith %}
+                        {% set button_text = 'button.delete_tariff'|trans %}
+                    {% else %}
+                        {% set button_text = 'button.delete_license'|trans %}
+                    {% endif %}
+                    {{ macros_button.confirm(
+                        button_text,
+                        'delete_tariff',
+                        'tariff',
+                        'btn-danger',
+                        'fa-minus-circle') }}
+                {% elseif not tariff.replaceChild %}
+                    {% if isZenith %}
+                        {% set button_text = 'button.change_tariff'|trans %}
+                    {% else %}
+                        {% set button_text = 'button.change_license'|trans %}
+                    {% endif %}
+                    {{ macros_button.modal(
+                        '⮕ ' ~ button_text,
+                        'change_tariff_choose',
+                        'tariff'
+                    ) }}
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro change_tariff_params(tariff, customer, profile, isZenith) %}
+    {% import _self as macros_tariff %}
+    {% if tariff.replaceChild is defined and tariff.replaceChild %}
+        {% set uniqueId = 'ch_' ~ tariff.id ~ '_' ~ tariff.replaceChild.id %}
+    {% else %}
+        {% set uniqueId = 'ch' %}
+    {% endif %}
+    <div class="row-striped">
+        {{ macros_tariff.param_row(
+            'label.access_permission'|trans, macros_tariff.tariff_permissions(tariff, uniqueId)
+        ) }}
+        {% if profile.for1C and not isZenith %}
+            {{ macros_tariff.param_row(
+                'label.number_of_workplaces'|trans, macros_tariff.multiplier(tariff)
+            ) }}
+        {% endif %}
+        {{ macros_tariff.param_row(
+            'label.subscription_price'|trans, macros_tariff.subscription_price_with_multiplier(tariff, customer)
+        ) }}
+        {{ macros_tariff.param_row(
+            'label.period'|trans, macros_tariff.period(tariff)
+        ) }}
+        {% if not isZenith %}
+            {{ macros_tariff.param_row(
+                'label.when_requests_are_exceeded'|trans, macros_tariff.when_requests_are_exceeded(tariff, customer)
+            ) }}
+            {{ macros_tariff.param_row(
+                'label.number_of_requests'|trans, macros_tariff.number_of_requests(tariff, customer)
+            ) }}
+        {% endif %}
+        {{ macros_tariff.param_row(
+            'label.acquisition_price'|trans, macros_tariff.acquisition_price(tariff, customer)
+        ) }}
+    </div>
+{% endmacro %}
+
+{% macro change_tariff_card(tariff, customer, profile, isZenith) %}
+    {% import _self as macros_tariff %}
+    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+
+    {% set idHash = customer.id ~ '_' ~ tariff.id ~ '_' ~tariff.replaceChild.id %}
+    {% set tabId = 'ttab_' ~ idHash %}
+    {% set collapseId = 'tcollapse_' ~ idHash %}
+
+    <div class="panel panel-default"
+         data-tariff-id="{{ tariff.id }}" data-replace-tariff-id="{{ tariff.replaceChild.id }}">
+        <div class="panel-heading" role="button" id="{{ tabId }}"
+             data-toggle="collapse" data-parent="#accordion" href="#{{ collapseId }}">
+            <div class="h5 panel-title">{{ macros_tariff.name(tariff) }}</div>
+        </div>
+
+        <div id="{{ collapseId }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ tabId }}">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="change-tariff-options" data-container="tariff_options">
+                        <div><input type="checkbox" checked="checked" data-field="autoRenwal"></div>
+                        <div>{{ 'label.auto_renewal'|trans }}</div>
+                        {% if profile.for1C %}
+                            <div>{{ 'label.number_of_workplaces'|trans }}</div>
+                            <div>
+                                <input type="number" value="{{ tariff.multiplier }}" class="form-control"
+                                       data-field="jobs" data-action="change_tariff_preview"
+                                       data-result-container="tariff-params">
+                            </div>
+                        {% endif %}
+                        <div class="change-tariff-options-fit">
+                            {{ macros_button.confirm(
+                                '' ~ 'button.change'|trans, 'change_tariff', 'tariff', 'btn-primary'
+                            ) }}
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item" data-container="tariff-params">
+                    {{ macros_tariff.change_tariff_params(tariff, customer, profile, isZenith) }}
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro add_tariff_params(tariff, customer, profile, isZenith) %}
+    {% import _self as macros_tariff %}
+    {% if tariff.replaceChild is defined and tariff.replaceChild %}
+        {% set uniqueId = 'add_' ~ tariff.id ~ '_' ~ tariff.replaceChild.id %}
+    {% else %}
+        {% set uniqueId = 'add' %}
+    {% endif %}
+    <div class="row-striped">
+        {{ macros_tariff.param_row(
+            'label.access_permission'|trans, macros_tariff.tariff_permissions(tariff)
+        ) }}
+        {% if profile.for1C and not isZenith %}
+            {{ macros_tariff.param_row(
+                'label.number_of_workplaces'|trans, macros_tariff.multiplier(tariff, uniqueId)
+            ) }}
+        {% endif %}
+        {{ macros_tariff.param_row(
+            'label.subscription_price'|trans, macros_tariff.subscription_price_with_multiplier(tariff, customer)
+        ) }}
+        {{ macros_tariff.param_row(
+            'label.period'|trans, macros_tariff.period(tariff)
+        ) }}
+        {% if not isZenith %}
+            {{ macros_tariff.param_row(
+                'label.when_requests_are_exceeded'|trans,
+                macros_tariff.when_requests_are_exceeded(tariff, customer)
+            ) }}
+            {{ macros_tariff.param_row(
+                'label.number_of_requests'|trans, macros_tariff.number_of_requests(tariff, customer)
+            ) }}
+        {% endif %}
+        {{ macros_tariff.param_row(
+            'label.acquisition_price'|trans, macros_tariff.acquisition_price(tariff, customer)
+        ) }}
+    </div>
+{% endmacro %}
+
+{% macro add_tariff_card(tariff, customer, profile, isZenith) %}
+    {% import _self as macros_tariff %}
+    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+
+    {% set idHash = customer.id ~ '_' ~ tariff.id %}
+    {% set tabId = 'ttab_' ~ idHash %}
+    {% set collapseId = 'tcollapse_' ~ idHash %}
+
+    <div class="panel panel-default" data-tariff-id="{{ tariff.id }}">
+        <div class="panel-heading" role="button" id="{{ tabId }}"
+             data-toggle="collapse" data-parent="#accordion" href="#{{ collapseId }}">
+            <div class="h5 panel-title">{{ macros_tariff.name(tariff) }}</div>
+        </div>
+
+        <div id="{{ collapseId }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ tabId }}">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <div class="change-tariff-options" data-container="tariff_options">
+                        <div><input type="checkbox" checked="checked" data-field="autoRenwal"></div>
+                        <div>{{ 'label.auto_renewal'|trans }}</div>
+                        {% if profile.for1C %}
+                            <div>{{ 'label.number_of_workplaces'|trans }}</div>
+                            <div>
+                                <input type="number" value="1" data-field="jobs" class="form-control"
+                                       data-action="add_tariff_preview" data-result-container="tariff-params">
+                            </div>
+                        {% endif %}
+                        <div class="change-tariff-options-fit">
+                            {% if isZenith %}
+                                {% set button_text = 'button.add_tariff'|trans %}
+                            {% else %}
+                                {% set button_text = 'button.add_license'|trans %}
+                            {% endif %}
+                            {{ macros_button.confirm(
+                                '' ~ button_text, 'add_tariff', 'tariffs', 'btn-primary'
+                            ) }}
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item" data-container="tariff-params">
+                    {{ macros_tariff.add_tariff_params(tariff, customer, profile, isZenith) }}
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endmacro %}
+
+{% macro template_content(tariff, customer, profile, isZenith) %}
+    {% import _self as macros_tariff %}
+    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% import "ProfileAdminBundle:macros:extra.html.twig" as macros_extra %}
+
+    <div class="thumbnail">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="row h4">
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        {{ macros_tariff.name(tariff) }}
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
+                        {{ macros_tariff.auto_renewal_button(tariff) }}
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <div class="box-body row-striped">
+            {{ macros_tariff.param_row(
+                'label.access_permission'|trans, macros_tariff.tariff_permissions(tariff)
+            ) }}
+            {% if profile.for1C and not isZenith %}
+                {{ macros_tariff.param_row(
+                    'label.number_of_workplaces'|trans, macros_tariff.multiplier(tariff, customer)
+                ) }}
+            {% endif %}
+            {{ macros_tariff.param_row(
+                'label.subscription_price'|trans, macros_tariff.subscription_price_with_multiplier(tariff, customer)
+            ) }}
+            {{ macros_tariff.param_row(
+                'label.period'|trans, macros_tariff.period(tariff)
+            ) }}
+            {% if not isZenith %}
+                {{ macros_tariff.param_row(
+                    'label.when_requests_are_exceeded'|trans,
+                    macros_tariff.when_requests_are_exceeded(tariff, customer)
+                ) }}
+                {{ macros_tariff.param_row(
+                    'label.number_of_requests'|trans, macros_tariff.number_of_requests(tariff, customer)
+                ) }}
+            {% endif %}
+            {{ macros_tariff.param_row(
+                'label.acquisition_price'|trans, macros_tariff.acquisition_price(tariff, customer)
+            ) }}
+        </div>
+
+        <div class="caption">
+            {% if isZenith %}
+                {% set button_text = 'button.delete_tariff'|trans %}
+            {% else %}
+                {% set button_text = 'button.delete_license'|trans %}
+            {% endif %}
+
+            {{ macros_button.confirm(button_text, 'delete_tariff', 'tariff', 'btn-danger') }}
+        </div>
+
+        {{ macros_extra.fields(tariff) }}
+
+    </div>
+{% endmacro %}
+
+{% macro template(tariff, customer, profile, isZenith) %}
+    {% import _self as macros_tariff %}
+
+    <div class="col-sm-12 col-md-12 col-lg-6 col-xl-4" data-container="tariff" data-tariff-id="{{ tariff.id }}">
+        {{ macros_tariff.template_content(tariff, customer, profile, isZenith) }}
+    </div>
+{% endmacro %}
