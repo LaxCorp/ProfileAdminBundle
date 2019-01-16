@@ -264,7 +264,7 @@
 {% macro deactivation_date(tariff) %}
     {% import _self as macros_tariff %}
     {% if macros_tariff.is_deactivation_date(tariff) == 'true' %}
-        {% if macros_tariff.is_replaced(tariff) == 'true' %}
+        {% if macros_tariff.is_replaced(tariff) == 'true' and tariff.replaceChild.autoRenewal %}
             {{ tariff.replaceChild.deactivationDate|date("d.m.Y H:i") }}
         {% else %}
             {{ tariff.deactivationDate|date("d.m.Y H:i") }}
