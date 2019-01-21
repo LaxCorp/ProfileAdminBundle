@@ -310,6 +310,9 @@
             </ul>
             <div class="box-body row-striped">
                 {{ macros_profile.tariff_param_row(
+                    'label.access_permission'|trans, macros_tariff.tariff_permissions(tariff)
+                ) }}
+                {{ macros_profile.tariff_param_row(
                     'label.feepay_date'|trans, macros_tariff.feepay_date(tariff)
                 ) }}
                 {% if macros_tariff.is_deactivation_date(tariff) == 'true' %}

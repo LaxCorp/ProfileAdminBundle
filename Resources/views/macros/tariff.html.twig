@@ -1,5 +1,10 @@
 {% trans_default_domain 'profile_admin' %}
 
+{% macro short_service_name(service) %}{% spaceless %}
+    {% if service.code == 'Aftermarket' %}AM{% endif %}
+    {% if service.code == 'WSOEM' %}OEM{% endif %}
+{% endspaceless %}{% endmacro %}
+
 {% macro account_currency(account) %}{% spaceless %}
     {{ account.currency.format }}
 {% endspaceless %}{% endmacro %}
@@ -122,8 +127,6 @@
             {{ 'label.auto_renewal'|trans }}
         </span>
     {% endif %}
-
-
 {% endmacro %}
 
 {% macro plural_days(count) %}{% spaceless %}
@@ -525,43 +528,14 @@
     {% endif %}
 {% endmacro %}
 
-{% macro service_permissions(permission) %}{% spaceless %}
-    {% if permission.servicePermissions is defined %}
-        {% for service_permissions in permission.servicePermissions %}
-            {% if loop.first %}:{% else %},{% endif %} {{ service_permissions.service.name }}
-        {% endfor %}
-    {% else %}
-        -
-    {% endif %}
-{% endspaceless %}{% endmacro %}
-
-{% macro resource_permissions(permission) %}{% spaceless %}
-    {% if permission.servicePermissions is defined %}
-        {% set count = 0 %}
-        {% for service_permissions in permission.servicePermissions %}
-            {% for resource_permissions in service_permissions.resourcePermissions %}
-                {% if resource_permissions.fullAccess %}
-                    {{ resource_permissions.resource.name }}
-                    {% set count = count + 1 %}
-                {% endif %}
-            {% endfor %}
-        {% endfor %}
-        <span class="badge">{{ count }}</span>
-    {% else %}
-        -
-    {% endif %}
-{% endspaceless %}{% endmacro %}
-
-{% macro button_permissions(permission, uniquePrefix) %}
+{% macro long_permission_name(permission) %}{% spaceless %}
     {% import _self as macros_tariff %}
-    {% set id = uniquePrefix~'_'~permission.id %}
-    <button type="button" data-toggle="collapse" data-target="#{{ id }}" class="btn btn-sm btn-success">
-        {{ permission.name }}{{ macros_tariff.service_permissions(permission)|raw }}
-    </button>
-    <div id="{{ id }}" class="collapse">
-        {{ macros_tariff.resource_permissions(permission) }}
-    </div>
-{% endmacro %}
+    {{ permission.name }}: {% spaceless %}
+        {% for sp in permission.servicePermissions %}{% spaceless %}
+            {% if not loop.first %}, {% endif %}
+            {{ macros_tariff.short_service_name(sp.service) }}
+        {% endspaceless %}{% endfor %}{% endspaceless %}
+{% endspaceless %}{% endmacro %}
 
 {% macro tariff_permissions(tariff, prefix) %}
     {% import _self as macros_tariff %}
@@ -570,25 +544,19 @@
         {% set prefix = '' %}
     {% endif %}
 
-    {% set currentPermsId = [] %}
-    {% set replacePermsId = [] %}
-    {% set currentPerms = '' %}
-    {% set replacePerms = '' %}
+    {% set currentPerms = [] %}
+    {% set replacePerms = [] %}
     {% set isDiffer = false %}
 
     {% if tariff.templatePermissions is defined %}
         {% for permission in tariff.templatePermissions %}
-            {% set currentPermsId = currentPermsId|merge([permission.id]) %}
-            {% set uniquePrefix = prefix ~ 'templperms_'~tariff.id~'_'~'now'|date('U') %}
-            {% set currentPerms = currentPerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+            {% set currentPerms = currentPerms|merge([macros_tariff.long_permission_name(permission)]) %}
         {% endfor %}
     {% endif %}
 
     {% if tariff.customerTariffPermissions is defined %}
         {% for permission in tariff.customerTariffPermissions %}
-            {% set currentPermsId = currentPermsId|merge([permission.id]) %}
-            {% set uniquePrefix = prefix ~ 'custtarperms_'~tariff.id~'_'~'now'|date('U') %}
-            {% set currentPerms = currentPerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+            {% set currentPerms = currentPerms|merge([macros_tariff.long_permission_name(permission)]) %}
         {% endfor %}
     {% endif %}
 
@@ -600,26 +568,20 @@
 
     {% if ttariff and ttariff.templatePermissions is defined %}
         {% for permission in ttariff.templatePermissions %}
-            {% set currentPermsId = currentPermsId|merge([permission.id]) %}
-            {% set uniquePrefix = prefix ~ 'ttemplperms_'~tariff.id~'_'~'now'|date('U') %}
-            {% set currentPerms = currentPerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+            {% set currentPerms = currentPerms|merge([macros_tariff.long_permission_name(permission)]) %}
         {% endfor %}
     {% endif %}
 
     {% if tariff.replaceChild is defined and tariff.replaceChild %}
         {% if tariff.replaceChild.templatePermissions is defined %}
             {% for permission in tariff.replaceChild.templatePermissions %}
-                {% set replacePermsId = replacePermsId|merge([permission.id]) %}
-                {% set uniquePrefix = prefix ~ 'retemplperms_'~tariff.id~'_'~'now'|date('U') %}
-                {% set replacePerms = replacePerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+                {% set replacePerms = replacePerms|merge([macros_tariff.long_permission_name(permission)]) %}
             {% endfor %}
         {% endif %}
 
         {% if tariff.replaceChild.customerTariffPermissions is defined %}
             {% for permission in tariff.replaceChild.customerTariffPermissions %}
-                {% set replacePermsId = replacePermsId|merge([permission.id]) %}
-                {% set uniquePrefix = prefix ~ 'recusttarperms_'~tariff.id~'_'~'now'|date('U') %}
-                {% set replacePerms = replacePerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+                {% set replacePerms = replacePerms|merge([macros_tariff.long_permission_name(permission)]) %}
             {% endfor %}
         {% endif %}
 
@@ -631,22 +593,20 @@
 
         {% if rettariff and rettariff.templatePermissions is defined %}
             {% for permission in rettariff.templatePermissions %}
-                {% set replacePermsId = replacePermsId|merge([permission.id]) %}
-                {% set uniquePrefix = prefix ~ 'rettemplperms_'~tariff.id~'_'~'now'|date('U') %}
-                {% set replacePerms = replacePerms ~ macros_tariff.button_permissions(permission, uniquePrefix) %}
+                {% set replacePerms = replacePerms|merge([macros_tariff.long_permission_name(permission)]) %}
             {% endfor %}
         {% endif %}
 
-        {% if currentPermsId != replacePermsId %}
+        {% if currentPerms != replacePerms %}
             {% set isDiffer = true %}
         {% endif %}
     {% endif %}
 
     <div class="tariff-permissions-buttons">
         {% if isDiffer %}
-            {{ macros_tariff.compare_row(currentPerms, replacePerms) }}
+            {{ macros_tariff.compare_row(currentPerms|join(', '), replacePerms|join(', ')) }}
         {% else %}
-            {{ currentPerms|raw }}
+            {{ currentPerms|join(', ') }}
         {% endif %}
     </div>
 {% endmacro %}
