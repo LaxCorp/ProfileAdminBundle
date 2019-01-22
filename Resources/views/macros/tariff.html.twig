@@ -1,8 +1,7 @@
 {% trans_default_domain 'profile_admin' %}
 
 {% macro short_service_name(service) %}{% spaceless %}
-    {% if service.code == 'Aftermarket' %}AM{% endif %}
-    {% if service.code == 'WSOEM' %}OEM{% endif %}
+    {% if service.code == 'Aftermarket' %}AM{% elseif service.code == 'WSOEM' %}OEM{% else %}{{ service.code }}{% endif %}
 {% endspaceless %}{% endmacro %}
 
 {% macro account_currency(account) %}{% spaceless %}
