@@ -344,6 +344,9 @@
                     {{ macros_profile.tariff_param_row(
                         'label.remaining_queries'|trans, macros_tariff.remaining_queries(tariff)
                     ) }}
+                    {{ macros_profile.tariff_param_row(
+                        'label.requests_limit_per_minute'|trans, macros_tariff.requests_limit(tariff)
+                    ) }}
                 {% endif %}
             </div>
         </div>

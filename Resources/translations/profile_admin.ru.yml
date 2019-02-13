@@ -76,6 +76,7 @@ label:
     state: Статус
     subscription_price: Абонентская плата
     when_requests_are_exceeded: При превышении запросов
+    requests_limit_per_minute: Лимит запросов в минуту
 placeholder:
     site_domain: your.site.com
     url_template: URL-шаблон http://your.site.com/basket/?article={article}&brand={brand}

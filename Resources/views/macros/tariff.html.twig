@@ -361,6 +361,31 @@
     {% endspaceless %}
 {% endmacro %}
 
+{% macro get_requests_rate_list(serviceTariffs) %}
+    {% import _self as macros_tariff %}
+    {% spaceless %}
+        {% for serviceTariff in serviceTariffs %}
+            <div>{% spaceless %}
+                    {{ macros_tariff.short_service_name(serviceTariff.service) }}: {{ serviceTariff.requestRateLimit }}
+                {% endspaceless %}</div>
+        {% endfor %}
+    {% endspaceless %}
+{% endmacro %}
+
+{% macro requests_limit(tariff) %}
+    {% import _self as macros_tariff %}
+    {% set current = macros_tariff.get_requests_rate_list(tariff.serviceTariffs) %}
+    {% set replace = null %}
+    {% if tariff.replaceChild %}
+        {% set replace = macros_tariff.get_requests_rate_list(tariff.replaceChild.serviceTariffs) %}
+    {% endif %}
+    {% if replace and replace != current %}
+        {{ macros_tariff.compare_row(current, replace) }}
+        {% else %}
+        {{ current }}
+    {% endif %}
+{% endmacro %}
+
 {% macro remaining_queries(tariff) %}
     {% import 'AppBundle:macros:code_text_maps.html.twig' as ctmap %}
     {% import _self as macros_tariff %}
@@ -694,6 +719,9 @@
                 {{ macros_tariff.param_row(
                     'label.remaining_queries'|trans, macros_tariff.remaining_queries(tariff)
                 ) }}
+                {{ macros_tariff.param_row(
+                    'label.requests_limit_per_minute'|trans, macros_tariff.requests_limit(tariff)
+                ) }}
             {% endif %}
             {{ macros_tariff.param_row(
                 'label.acquisition_price'|trans, macros_tariff.acquisition_price(tariff, customer)
@@ -801,6 +829,9 @@
             {{ macros_tariff.param_row(
                 'label.number_of_requests'|trans, macros_tariff.number_of_requests(tariff, customer)
             ) }}
+            {{ macros_tariff.param_row(
+                'label.requests_limit_per_minute'|trans, macros_tariff.requests_limit(tariff)
+            ) }}
         {% endif %}
         {{ macros_tariff.param_row(
             'label.acquisition_price'|trans, macros_tariff.acquisition_price(tariff, customer)
@@ -881,6 +912,9 @@
             ) }}
             {{ macros_tariff.param_row(
                 'label.number_of_requests'|trans, macros_tariff.number_of_requests(tariff, customer)
+            ) }}
+            {{ macros_tariff.param_row(
+                'label.requests_limit_per_minute'|trans, macros_tariff.requests_limit(tariff)
             ) }}
         {% endif %}
         {{ macros_tariff.param_row(
@@ -976,6 +1010,9 @@
                 ) }}
                 {{ macros_tariff.param_row(
                     'label.number_of_requests'|trans, macros_tariff.number_of_requests(tariff, customer)
+                ) }}
+                {{ macros_tariff.param_row(
+                    'label.requests_limit_per_minute'|trans, macros_tariff.requests_limit(tariff)
                 ) }}
             {% endif %}
             {{ macros_tariff.param_row(
