@@ -36,8 +36,8 @@ label:
     access_permission: Права доступа
     account_amount: Остаток
     account_credit: Кредитный лимит
-    acquisition_fee_paid: Платеж за подключение
-    acquisition_price: Стоимость подключения
+    acquisition_fee_paid: Единовременный платеж
+    acquisition_price: Единовременный платеж
     add_license_choose: Выберите лицензию
     add_tariff_choose: Выберите тариф
     auto_renewal: Авт. списание
@@ -74,7 +74,7 @@ label:
     request: Запрос
     site_domain: Домен cайта, для внедрения сервиса
     state: Статус
-    subscription_price: Абонентская плата
+    subscription_price: Ежемесячный платеж
     when_requests_are_exceeded: При превышении запросов
     requests_limit_per_minute: Лимит запросов в минуту
 placeholder:
