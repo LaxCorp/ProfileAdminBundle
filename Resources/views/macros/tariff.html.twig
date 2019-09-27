@@ -1,28 +1,28 @@
 {% trans_default_domain 'profile_admin' %}
 
-{% macro short_service_name(service) %}{% spaceless %}
+{% macro short_service_name(service) %}{% apply spaceless %}
     {% if service.code == 'Aftermarket' %}AM{% elseif service.code == 'WSOEM' %}OEM{% else %}{{ service.code }}{% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro account_currency(account) %}{% spaceless %}
+{% macro account_currency(account) %}{% apply spaceless %}
     {{ account.currency.format }}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro money(decimal, account_currency) %}{% spaceless %}
+{% macro money(decimal, account_currency) %}{% apply spaceless %}
     {% if decimal !=0 %}
         {{ decimal|localizedcurrency(account_currency) }}
     {% else %}
         {{ 0.00|localizedcurrency(account_currency) }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro money_empty_text(decimal, text, account_currency) %}{% spaceless %}
+{% macro money_empty_text(decimal, text, account_currency) %}{% apply spaceless %}
     {% if decimal !=0 %}
         {{ decimal|localizedcurrency(account_currency) }}
     {% else %}
         {{ text }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro name(tariff) %}
     {% import _self as macros_tariff %}
@@ -36,7 +36,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro tariff_status(tariff) %}{% spaceless %}
+{% macro tariff_status(tariff) %}{% apply spaceless %}
     {% set state  = tariff.state %}
     {% set active = tariff.active %}
 
@@ -55,9 +55,9 @@
     {% if state == 'DELETED' %}
         {{ 'tariff_status.deleted'|trans }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro license_status(tariff) %}{% spaceless %}
+{% macro license_status(tariff) %}{% apply spaceless %}
     {% set state  = tariff.state %}
     {% set active = tariff.active %}
 
@@ -76,9 +76,9 @@
     {% if state == 'DELETED' %}
         {{ 'license_status.deleted'|trans }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro status_bootstrap_class(tariff) %}{% spaceless %}
+{% macro status_bootstrap_class(tariff) %}{% apply spaceless %}
     {% set state  = tariff.state %}
     {% set active = tariff.active %}
 
@@ -101,7 +101,7 @@
     {% if state == 'DELETED' %}
         {{ error_class }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro auto_renewal_button(tariff) %}
     {% import _self as macros_tariff %}
@@ -128,9 +128,9 @@
     {% endif %}
 {% endmacro %}
 
-{% macro plural_days(count) %}{% spaceless %}
+{% macro plural_days(count) %}{% apply spaceless %}
     {{ 'pluralize.days'|transchoice(count) }}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro period(tariff) %}
     {% import _self as macros_tariff %}
@@ -147,7 +147,7 @@
     {% endif %}
 {% endmacro %}
 
-{% macro period_map(tariff) %}{% spaceless %}
+{% macro period_map(tariff) %}{% apply spaceless %}
     {% import _self as macros_tariff %}
 
     {% if tariff and tariff.billingPeriod is defined %}
@@ -178,9 +178,9 @@
     {% if billingPeriod == 'ALLIGNED_MONTH' and not days %}
         {{ 'period.on_1st_month'|trans|lower }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro serv_period_map(service) %}{% spaceless %}
+{% macro serv_period_map(service) %}{% apply spaceless %}
     {% import _self as macros_tariff %}
 
     {% if service and service.billingPeriod is defined %}
@@ -211,7 +211,7 @@
     {% if billingPeriod == 'ALLIGNED_MONTH' and not days %}
         {{ 'period.on_1st_month'|trans|lower }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro feepay_date(tariff) %}
     {% if tariff.subscriptionDate is defined and tariff.subscriptionDate is not null %}
@@ -237,15 +237,15 @@
     {% endif %}
 {% endmacro %}
 
-{% macro is_replaced(tariff) %}{% spaceless %}
+{% macro is_replaced(tariff) %}{% apply spaceless %}
     {% if tariff.replaceChild is defined and tariff.replaceChild is not null %}
         true
     {% else %}
         false
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro is_deactivation_date(tariff) %}{% spaceless %}
+{% macro is_deactivation_date(tariff) %}{% apply spaceless %}
     {% import _self as macros_tariff %}
 
     {% set isReplaced = macros_tariff.is_replaced(tariff)=='true' %}
@@ -261,7 +261,7 @@
     {% else %}
         false
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro deactivation_date(tariff) %}
     {% import _self as macros_tariff %}
@@ -336,40 +336,40 @@
 
 {% macro requests_are_exceeded(tariff, customer) %}
     {% import _self as macros_tariff %}
-    {% import 'AppBundle:macros:code_text_maps.html.twig' as ctmap %}
-    {% spaceless %}
+    {% import 'macros/code_text_maps.html.twig' as ctmap %}
+    {% apply spaceless %}
         {% set overClickTariff = false %}
         {% for serviceTariff in tariff.serviceTariffs %}
             {% set overuseClickPrice = serviceTariff.overuseClickPrice %}
             {% if overuseClickPrice %}
                 {% set overClickTariff = true %}
-                <div>{% spaceless %}
+                <div>{% apply spaceless %}
                         {{ macros_tariff.money(
                             serviceTariff.overuseClickPrice, macros_tariff.account_currency(customer.account)
                         ) }}
-                        {% spaceless %}
+                        {% apply spaceless %}
                             / {{ 'label.request'|trans|lower }}
                             {{ ctmap.service_map(serviceTariff.service.code) }}
-                        {% endspaceless %}
-                    {% endspaceless %}</div>
+                        {% endapply %}
+                    {% endapply %}</div>
             {% else %}
                 {% if overClickTariff == false %}
                     {{ 'label.disabling_service'|trans|lower }}
                 {% endif %}
             {% endif %}
         {% endfor %}
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro get_requests_rate_list(serviceTariffs) %}
     {% import _self as macros_tariff %}
-    {% spaceless %}
+    {% apply spaceless %}
         {% for serviceTariff in serviceTariffs %}
-            <div>{% spaceless %}
+            <div>{% apply spaceless %}
                     {{ macros_tariff.short_service_name(serviceTariff.service) }}: {{ serviceTariff.requestRateLimit }}
-                {% endspaceless %}</div>
+                {% endapply %}</div>
         {% endfor %}
-    {% endspaceless %}
+    {% endapply %}
 {% endmacro %}
 
 {% macro requests_limit(tariff) %}
@@ -387,7 +387,7 @@
 {% endmacro %}
 
 {% macro remaining_queries(tariff) %}
-    {% import 'AppBundle:macros:code_text_maps.html.twig' as ctmap %}
+    {% import 'macros/code_text_maps.html.twig' as ctmap %}
     {% import _self as macros_tariff %}
     {% set oldAvailableClicksCount = 0 %}
     {% set newAvailableClicksCount = 0 %}
@@ -436,7 +436,7 @@
 {% endmacro %}
 
 {% macro number_of_requests(tariff, customer) %}
-    {% import 'AppBundle:macros:code_text_maps.html.twig' as ctmap %}
+    {% import 'macros/code_text_maps.html.twig' as ctmap %}
     {% import _self as macros_tariff %}
 
     {% set oldClicksCount = 0 %}
@@ -552,14 +552,14 @@
     {% endif %}
 {% endmacro %}
 
-{% macro long_permission_name(permission) %}{% spaceless %}
+{% macro long_permission_name(permission) %}{% apply spaceless %}
     {% import _self as macros_tariff %}
-    {{ permission.name }}: {% spaceless %}
-        {% for sp in permission.servicePermissions %}{% spaceless %}
+    {{ permission.name }}: {% apply spaceless %}
+        {% for sp in permission.servicePermissions %}{% apply spaceless %}
             {% if not loop.first %}, {% endif %}
             {{ macros_tariff.short_service_name(sp.service) }}
-        {% endspaceless %}{% endfor %}{% endspaceless %}
-{% endspaceless %}{% endmacro %}
+        {% endapply %}{% endfor %}{% endapply %}
+{% endapply %}{% endmacro %}
 
 {% macro tariff_permissions(tariff, prefix) %}
     {% import _self as macros_tariff %}
@@ -635,22 +635,22 @@
     </div>
 {% endmacro %}
 
-{% macro param_row(name, value) %}{% spaceless %}
+{% macro param_row(name, value) %}{% apply spaceless %}
     {% import _self as macros_tariff %}
     <div class="row">
         <div class="col-lg-4 text-mute">{{ name }}</div>
         <div class="col-lg-8 text-info">{{ value }}</div>
     </div>
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro compare_row(left, right) %}{% spaceless %}
+{% macro compare_row(left, right) %}{% apply spaceless %}
     {% import _self as macros_tariff %}
     <div class="compare-row">
         <div>{{ left|raw }}</div>
         <div class="compare-row-arrow glyphicon glyphicon-arrow-right"></div>
         <div>{{ right|raw }}</div>
     </div>
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro card(tariff, customer, profile, isGrantedEdit, isZenith) %}
     {% import _self as macros_tariff %}

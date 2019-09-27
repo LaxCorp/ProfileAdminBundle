@@ -2,11 +2,11 @@
 
 namespace LaxCorp\ProfileAdminBundle\Controller;
 
-use AppBundle\Entity\Client;
-use AppBundle\Helper\AppFlagsInterface;
-use AppBundle\Helper\BillingNotificationHelper;
-use AppBundle\Helper\ClientHelper;
-use AppBundle\Helper\ProfileHelper;
+use App\Entity\Client;
+use App\Helper\AppFlagsInterface;
+use App\Helper\BillingNotificationHelper;
+use App\Helper\ClientHelper;
+use App\Helper\ProfileHelper;
 use LaxCorp\BillingPartnerBundle\Helper\CustomerHelper;
 use LaxCorp\BillingPartnerBundle\Helper\CustomerTariffHelper;
 use LaxCorp\CatalogHostingBundle\Helper\CatalogCustomerHelper;
@@ -20,7 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
-use Symfony\Component\Templating\EngineInterface;
+use Twig\Environment;
 
 /**
  * @inheritdoc
@@ -65,7 +65,7 @@ abstract class AbstractProfileController extends AbstractController
     protected $appFlags;
 
     /**
-     * @var EngineInterface
+     * @var Environment
      */
     protected $templating;
 
@@ -99,7 +99,7 @@ abstract class AbstractProfileController extends AbstractController
         ProfileHelper $profileHelper,
         CustomerHelper $customerHelper,
         AppFlagsInterface $appFlags,
-        EngineInterface $templating,
+        Environment $templating,
         CustomerTariffHelper $customerTariffHelper,
         BillingNotificationHelper $billingNotificationHelper,
         AuthorizationCheckerInterface $authorizationChecker,
@@ -192,7 +192,7 @@ abstract class AbstractProfileController extends AbstractController
     {
         $profilesCount = 0;
 
-        $repository = $this->getDoctrine()->getRepository('AppBundle:Profiles');
+        $repository = $this->getDoctrine()->getRepository('App:Profiles');
 
         $profiles = $repository->findBy(['client' => $client, 'deleted' => false]);
 

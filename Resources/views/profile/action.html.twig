@@ -122,7 +122,7 @@
     </div>
     <script type="text/javascript">
         $('[data-toggle=pwgen]').profile_admin_pwgen({
-            'password_lenght': {{ render(controller('AppBundle:Customer:customerPasswordLength')) }}
+            'password_lenght': {{ render(controller('App\\Controller\\CustomerController:customerPasswordLengthAction')) }}
         });
     </script>
 {% endblock %}

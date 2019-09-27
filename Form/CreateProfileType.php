@@ -2,7 +2,7 @@
 
 namespace LaxCorp\ProfileAdminBundle\Form;
 
-use AppBundle\Helper\AppFlagsInterface;
+use App\Helper\AppFlagsInterface;
 use LaxCorp\ProfileAdminBundle\Model\ExtarFields;
 use Sonata\CoreBundle\Form\Type\DatePickerType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

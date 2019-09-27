@@ -2,11 +2,11 @@
 
 namespace LaxCorp\ProfileAdminBundle\Controller;
 
-use AppBundle\Entity\Profiles;
-use AppBundle\Helper\AppFlagsInterface;
-use AppBundle\Helper\ClientHelper;
-use AppBundle\Helper\ProfileHelper;
-use AppBundle\Helper\TariffHelper;
+use App\Entity\Profiles;
+use App\Helper\AppFlagsInterface;
+use App\Helper\ClientHelper;
+use App\Helper\ProfileHelper;
+use App\Helper\TariffHelper;
 use LaxCorp\BillingPartnerBundle\Helper\CustomerTariffHelper;
 use LaxCorp\BillingPartnerBundle\Helper\MappingHelper;
 use LaxCorp\BillingPartnerBundle\Helper\ReplaceTariffHelper;

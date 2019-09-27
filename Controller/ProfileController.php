@@ -2,8 +2,8 @@
 
 namespace LaxCorp\ProfileAdminBundle\Controller;
 
-use AppBundle\Entity\Client;
-use AppBundle\Entity\Profiles;
+use App\Entity\Client;
+use App\Entity\Profiles;
 use LaxCorp\ProfileAdminBundle\Exception\ClientNotFoundException;
 use LaxCorp\ProfileAdminBundle\Form\CreateProfileType;
 use LaxCorp\ProfileAdminBundle\Form\EditProfileType;
@@ -96,7 +96,7 @@ class ProfileController extends AbstractProfileController
 
                 $newCustomer->setPrognosePeriod($this->billingNotificationHelper->getClientPrognosePeriod($client));
                 $customerName = $this->templating->render(
-                    'AppBundle:CustomerProfile:default_customer_name.txt.twig', [
+                    'customer_profile/default_customer_name.txt.twig', [
                     'for1c'      => $for1c,
                     'domainName' => $newProfile->getDomainName()
                 ]);

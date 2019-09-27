@@ -2,8 +2,8 @@
 
 namespace LaxCorp\ProfileAdminBundle\Form;
 
-use AppBundle\Entity\Profiles;
-use AppBundle\Helper\AppFlagsInterface;
+use App\Entity\Profiles;
+use App\Helper\AppFlagsInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;

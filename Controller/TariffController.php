@@ -2,7 +2,7 @@
 
 namespace LaxCorp\ProfileAdminBundle\Controller;
 
-use AppBundle\Entity\Profiles;
+use App\Entity\Profiles;
 use LaxCorp\BillingPartnerBundle\Model\Customer;
 use LaxCorp\ProfileAdminBundle\Model\ActionRoles;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;

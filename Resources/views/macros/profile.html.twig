@@ -31,20 +31,20 @@
     {% endif %}
 {% endmacro %}
 
-{% macro param_row(name, value) %}{% spaceless %}
+{% macro param_row(name, value) %}{% apply spaceless %}
     <div class="row">
         <div class="col-lg-5 text-mute">{{ name }}</div>
         <div class="col-lg-7 text-info">{{ value }}</div>
     </div>
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {#выдавать одну из переменных по choise#}
-{% macro text_or_class(text, class, choise) %}{% spaceless %}
+{% macro text_or_class(text, class, choise) %}{% apply spaceless %}
     {% if choise == 'text' %}{{ text }}{% else %}{{ class }}{% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {#статус профиля#}
-{% macro customer_status(state, billingState, choise) %}{% spaceless %}
+{% macro customer_status(state, billingState, choise) %}{% apply spaceless %}
     {% import _self as macros_profile %}
 
     {% if state == 'DISABLED' %}
@@ -62,9 +62,9 @@
     {% if state == 'ENABLED' and billingState == 'ENABLED' %}
         {{ macros_profile.text_or_class('customer_status.active'|trans, 'success', choise) }}
     {% endif %}
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
-{% macro profile_info(profile, catalogDisabled, currentCatalogDomain) %}{% spaceless %}
+{% macro profile_info(profile, catalogDisabled, currentCatalogDomain) %}{% apply spaceless %}
     {% import _self as macros_profile %}
     {% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
     {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
@@ -74,9 +74,9 @@
         <div class="col-md-5 row-striped-large">
             {{ macros_profile.param_row('label.profile_name'|trans, profile.name) }}
 
-            {% set class %}{% spaceless %}
+            {% set class %}{% apply spaceless %}
                 {{ macros_profile.customer_status(customer.state, customer.billingState) }}
-            {% endspaceless %}{% endset %}
+            {% endapply %}{% endset %}
             {% set stateItem %}
                 <span class="label label-{{ class }}">
                     {{ macros_profile.customer_status(customer.state, customer.billingState, 'text') }}
@@ -151,7 +151,7 @@
             </div>
         </div>
     </div>
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro card(profile, isGrantedEdit, isZenith) %}
     {% import _self as macros_profile %}
@@ -189,9 +189,9 @@
                         </a>
                     </div>
                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
-                        {% set class %}{% spaceless %}
+                        {% set class %}{% apply spaceless %}
                             {{ macros_profile.customer_status(customer.state, customer.billingState) }}
-                        {% endspaceless %}{% endset %}
+                        {% endapply %}{% endset %}
                         <span class="label label-{{ class }}">
                             {{ macros_profile.customer_status(customer.state, customer.billingState, 'text') }}
                         </span>
@@ -273,12 +273,12 @@
     </div>
 {% endmacro %}
 
-{% macro tariff_param_row(name, value) %}{% spaceless %}
+{% macro tariff_param_row(name, value) %}{% apply spaceless %}
     <div class="row">
         <div class="col-md-6 text-mute">{{ name }}</div>
         <div class="col-md-6 text-info">{{ value }}</div>
     </div>
-{% endspaceless %}{% endmacro %}
+{% endapply %}{% endmacro %}
 
 {% macro tariff_card(tariff, profile, isZenith) %}
     <div class="col-md-12" data-container="tariff" data-tariff-id="{{ tariff.id }}">
