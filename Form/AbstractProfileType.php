@@ -7,7 +7,6 @@ use App\Helper\AppFlagsInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -85,7 +84,7 @@ abstract class AbstractProfileType extends AbstractType
                     'label' => 'label.fqdn',
                     'trim'  => true,
                 ])
-                ->add('backUrl', UrlType::class, [
+                ->add('backUrl', null, [
                     'label' => 'label.backurl',
                     'attr'  => ['placeholder' => 'placeholder.url_template']
                 ])
