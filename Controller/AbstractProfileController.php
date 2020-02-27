@@ -205,6 +205,7 @@ abstract class AbstractProfileController extends AbstractController
 
     /**
      * @inheritdoc
+     * @throws
      */
     public function generateName(Client $client, bool $for1c)
     {
@@ -213,7 +214,7 @@ abstract class AbstractProfileController extends AbstractController
             'count' => $this->getNewCount($client)
         ];
 
-        return $this->templating->render('ProfileAdminBundle:profile:name.html.twig', $parameters);
+        return $this->templating->render('@ProfileAdmin/profile/name.html.twig', $parameters);
     }
 
     /**

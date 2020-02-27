@@ -160,7 +160,7 @@ abstract class AbstractTariffController extends AbstractController
         $customer = $profile->getCustomer();
         $tariff   = $this->customerTariffHelper->getCustomerTariff($customer, $tariffId);
 
-        return $this->render('ProfileAdminBundle:tariff:card.html.twig', [
+        return $this->render('@ProfileAdmin/tariff/card.html.twig', [
             'profile'       => $profile,
             'customer'      => $customer,
             'tariff'        => $tariff,

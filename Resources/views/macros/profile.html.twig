@@ -66,8 +66,8 @@
 
 {% macro profile_info(profile, catalogDisabled, currentCatalogDomain) %}{% apply spaceless %}
     {% import _self as macros_profile %}
-    {% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
-    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% import '@ProfileAdmin/macros/tariff.html.twig' as macros_tariff %}
+    {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
     {% set customer = profile.customer %}
 
     <div class="row">
@@ -163,8 +163,8 @@
 
 {% macro card_content(profile, isGrantedEdit, isZenith) %}
     {% import _self as macros_profile %}
-    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
-    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
+    {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
     {% set client = profile.client %}
     {% set customer = profile.customer %}
     {% set tariffs = customer.customerTariffs %}
@@ -282,8 +282,8 @@
 
 {% macro tariff_card(tariff, profile, isZenith) %}
     <div class="col-md-12" data-container="tariff" data-tariff-id="{{ tariff.id }}">
-        {% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
-        {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+        {% import '@ProfileAdmin/macros/tariff.html.twig' as macros_tariff %}
+        {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
         {% import _self as macros_profile %}
         {% set customer = profile.customer %}
 

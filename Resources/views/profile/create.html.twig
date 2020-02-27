@@ -1,7 +1,7 @@
-{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% extends '@ProfileAdmin/layout/base.html.twig' %}
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 {% trans_default_domain 'profile_admin' %}
-{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+{% import '@ProfileAdmin/macros/tariff.html.twig' as macros_tariff %}
 
 {% set for1c = profile.for1C|default(0) %}
 {% set customer = profile.customer %}

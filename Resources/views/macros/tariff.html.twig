@@ -105,7 +105,7 @@
 
 {% macro auto_renewal_button(tariff) %}
     {% import _self as macros_tariff %}
-    {% import 'ProfileAdminBundle:macros:button.html.twig' as macros_button %}
+    {% import '@ProfileAdmin/macros/button.html.twig' as macros_button %}
 
     {% set checked = false %}
     {% if tariff.replacement != true %}
@@ -662,7 +662,7 @@
 
 {% macro card_content(tariff, customer, profile, isGrantedEdit, isZenith) %}
     {% import _self as macros_tariff %}
-    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
 
     <div class="thumbnail">
         <ul class="list-group">
@@ -841,7 +841,7 @@
 
 {% macro change_tariff_card(tariff, customer, profile, isZenith) %}
     {% import _self as macros_tariff %}
-    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
 
     {% set idHash = customer.id ~ '_' ~ tariff.id ~ '_' ~tariff.replaceChild.id %}
     {% set tabId = 'ttab_' ~ idHash %}
@@ -925,7 +925,7 @@
 
 {% macro add_tariff_card(tariff, customer, profile, isZenith) %}
     {% import _self as macros_tariff %}
-    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
+    {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
 
     {% set idHash = customer.id ~ '_' ~ tariff.id %}
     {% set tabId = 'ttab_' ~ idHash %}
@@ -972,8 +972,8 @@
 
 {% macro template_content(tariff, customer, profile, isZenith) %}
     {% import _self as macros_tariff %}
-    {% import "ProfileAdminBundle:macros:button.html.twig" as macros_button %}
-    {% import "ProfileAdminBundle:macros:extra.html.twig" as macros_extra %}
+    {% import "@ProfileAdmin/macros/button.html.twig" as macros_button %}
+    {% import "@ProfileAdmin/macros/extra.html.twig" as macros_extra %}
 
     <div class="thumbnail">
         <ul class="list-group">

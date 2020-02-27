@@ -6,7 +6,7 @@ use App\Entity\Profiles;
 use LaxCorp\BillingPartnerBundle\Model\Customer;
 use LaxCorp\ProfileAdminBundle\Model\ActionRoles;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -79,7 +79,7 @@ class TariffController extends AbstractTariffController
 
         $this->customerTariffHelper->deleteCustomerTariff($customer, $customerTariff);
 
-        return $this->render('ProfileAdminBundle:tariff:deleted.html.twig', []);
+        return $this->render('@ProfileAdmin/tariff/deleted.html.twig', []);
     }
 
     /**
@@ -126,7 +126,7 @@ class TariffController extends AbstractTariffController
             $chooseTariffs[] = $chooseTariff;
         }
 
-        return $this->render('ProfileAdminBundle:tariff:change_tariff_choose.html.twig', [
+        return $this->render('@ProfileAdmin/tariff/change_tariff_choose.html.twig', [
             'profile'  => $profile,
             'customer' => $customer,
             'tariffs'  => $chooseTariffs,
@@ -158,7 +158,7 @@ class TariffController extends AbstractTariffController
 
         $tariff->setReplaceChild($this->multiplierEmulation($templateTariff, $jobs));
 
-        return $this->render('ProfileAdminBundle:tariff:change_tariff_preview.html.twig', [
+        return $this->render('@ProfileAdmin/tariff/change_tariff_preview.html.twig', [
             'tariff'   => $tariff,
             'customer' => $customer,
             'profile'  => $profile,
@@ -245,7 +245,7 @@ class TariffController extends AbstractTariffController
             $chooseTariffs[] = $this->multiplierEmulation($templateTariff, $jobs);
         }
 
-        return $this->render('ProfileAdminBundle:tariff:add_tariff_choose.html.twig', [
+        return $this->render('@ProfileAdmin/tariff/add_tariff_choose.html.twig', [
             'profile'  => $profile,
             'customer' => $customer,
             'tariffs'  => $chooseTariffs,
@@ -275,7 +275,7 @@ class TariffController extends AbstractTariffController
 
         $tariff = $this->multiplierEmulation($templateTariff, $jobs);
 
-        return $this->render('ProfileAdminBundle:tariff:add_tariff_preview.html.twig', [
+        return $this->render('@ProfileAdmin/tariff/add_tariff_preview.html.twig', [
             'tariff'   => $tariff,
             'customer' => $customer,
             'profile'  => $profile,
@@ -313,7 +313,7 @@ class TariffController extends AbstractTariffController
 
         $profile = $this->getProfile($clientId, $profileId);
 
-        return $this->render('ProfileAdminBundle:tariff:added.html.twig', [
+        return $this->render('@ProfileAdmin/tariff/added.html.twig', [
             'profile'  => $profile,
             'isGrantedEdit' => $this->authorizationChecker->isGranted(ActionRoles::editRoles()),
             'isZenith' => $this->appFlags->isZenith(),
@@ -369,7 +369,7 @@ class TariffController extends AbstractTariffController
             $chooseTariffs[] = $this->multiplierEmulation($templateTariff, $jobs);;
         }
 
-        return $this->render('ProfileAdminBundle:tariff:add_tariff_choose.html.twig', [
+        return $this->render('@ProfileAdmin/tariff/add_tariff_choose.html.twig', [
             'profile'  => $profile,
             'customer' => $customer,
             'tariffs'  => $chooseTariffs,
@@ -390,7 +390,7 @@ class TariffController extends AbstractTariffController
     {
         $parameters = $this->getTempalateTariffParameters($request, $clientId, $tariffId);
 
-        return $this->render('ProfileAdminBundle:tariff:add_tariff_preview.html.twig', $parameters);
+        return $this->render('@ProfileAdmin/tariff/add_tariff_preview.html.twig', $parameters);
     }
 
     /**
@@ -406,7 +406,7 @@ class TariffController extends AbstractTariffController
     {
         $parameters = $this->getTempalateTariffParameters($request, $clientId, $tariffId);
 
-        return $this->render('ProfileAdminBundle:tariff:add_template_tariff.html.twig', $parameters);
+        return $this->render('@ProfileAdmin/tariff/add_template_tariff.html.twig', $parameters);
     }
 
 }

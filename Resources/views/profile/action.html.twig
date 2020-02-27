@@ -1,8 +1,8 @@
-{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% extends '@ProfileAdmin/layout/base.html.twig' %}
 {% form_theme form 'bootstrap_3_layout.html.twig' %}
 {% trans_default_domain 'profile_admin' %}
-{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
-{% import 'ProfileAdminBundle:macros:profile.html.twig' as macros_profile %}
+{% import '@ProfileAdmin/macros/tariff.html.twig' as macros_tariff %}
+{% import '@ProfileAdmin/macros/profile.html.twig' as macros_profile %}
 
 {% set for1c = profile.for1C|default(0) %}
 {% set client = profile.client %}
@@ -83,7 +83,7 @@
 
                             <div class="tab-pane fade {% if action == 'edit' %}active {% endif %} in" id="tab_edit">
                                 {% if isGrantedEdit %}
-                                    {% include 'ProfileAdminBundle:profile:edit_form.html.twig' %}
+                                    {% include '@ProfileAdmin/profile/edit_form.html.twig' %}
                                 {% else %}
                                     <div class="alert alert-danger" role="alert">
                                         {{ 'expection.access_denied'|trans }}

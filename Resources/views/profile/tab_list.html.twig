@@ -1,4 +1,4 @@
-{% extends 'ProfileAdminBundle:layout:base.html.twig' %}
+{% extends '@ProfileAdmin/layout/base.html.twig' %}
 {% trans_default_domain 'profile_admin' %}
 
 {% if isZenith %}
@@ -26,5 +26,5 @@
 {% endblock %}
 
 {% block content %}
-    {% include 'ProfileAdminBundle:profile:tab_list_content.html.twig' %}
+    {% include '@ProfileAdmin/profile/tab_list_content.html.twig' %}
 {% endblock %}

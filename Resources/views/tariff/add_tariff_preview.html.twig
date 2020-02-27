@@ -1,5 +1,5 @@
 {% trans_default_domain 'profile_admin' %}
 
-{% import 'ProfileAdminBundle:macros:tariff.html.twig' as macros_tariff %}
+{% import '@ProfileAdmin/macros/tariff.html.twig' as macros_tariff %}
 
 {{ macros_tariff.add_tariff_params(tariff, customer, profile) }}

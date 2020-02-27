@@ -8,7 +8,7 @@ use LaxCorp\ProfileAdminBundle\Exception\ClientNotFoundException;
 use LaxCorp\ProfileAdminBundle\Form\CreateProfileType;
 use LaxCorp\ProfileAdminBundle\Form\EditProfileType;
 use LaxCorp\ProfileAdminBundle\Model\ActionRoles;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -39,7 +39,7 @@ class ProfileController extends AbstractProfileController
         $parameters = $this->getBaseParameters();
 
         if (!$this->authorizationChecker->isGranted(ActionRoles::createRoles())) {
-            return $this->render('ProfileAdminBundle:Expection:access_denied.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/Expection/access_denied.html.twig', $parameters);
         }
 
         $catalogDisabled = (!$this->profileHelper->isCatalogHostingEnabled() || $isZenith || $for1c) ? true : false;
@@ -52,7 +52,7 @@ class ProfileController extends AbstractProfileController
             $client->setAccount($account);
             $email = $client->getUser()->getEmail();
         } catch (ClientNotFoundException $exception) {
-            return $this->render('ProfileAdminBundle:Expection:client_not_found.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/Expection/client_not_found.html.twig', $parameters);
         }
 
         $parameters['client'] = $client;
@@ -131,7 +131,7 @@ class ProfileController extends AbstractProfileController
                 }
 
                 $flashMessage = $this->templating->render(
-                    'ProfileAdminBundle:profile:message_success_create.html.twig', [
+                    '@ProfileAdmin/profile/message_success_create.html.twig', [
                     'isZenith' => $isZenith,
                     'name'     => $newProfile->getName()
                 ]);
@@ -142,7 +142,7 @@ class ProfileController extends AbstractProfileController
             return $this->redirectToRoute('profile_admin__profile_list', ['clientId' => $client->getId()]);
         }
 
-        return $this->render('ProfileAdminBundle:profile:create.html.twig', $parameters);
+        return $this->render('@ProfileAdmin/profile/create.html.twig', $parameters);
     }
 
     /**
@@ -164,7 +164,7 @@ class ProfileController extends AbstractProfileController
         $isZenith = $this->appFlags->isZenith();
 
         if (!$this->authorizationChecker->isGranted(ActionRoles::byAction($action))) {
-            return $this->render('ProfileAdminBundle:Expection:access_denied.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/Expection/access_denied.html.twig', $parameters);
         }
 
         $parameters['isGrantedEdit'] = $this->authorizationChecker->isGranted(ActionRoles::editRoles());
@@ -174,7 +174,7 @@ class ProfileController extends AbstractProfileController
             $account = $this->clientHelper->getClientAccount($client);
             $client->setAccount($account);
         } catch (ClientNotFoundException $exception) {
-            return $this->render('ProfileAdminBundle:Expection:client_not_found.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/Expection/client_not_found.html.twig', $parameters);
         }
 
         $parameters['client'] = $client;
@@ -182,7 +182,7 @@ class ProfileController extends AbstractProfileController
         $profile = $this->profileHelper->getProfile($profileId, $client);
 
         if (!$profile) {
-            return $this->render('ProfileAdminBundle:Expection:profile_not_found.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/Expection/profile_not_found.html.twig', $parameters);
         }
 
         if ($action === 'enable' || $action === 'disable') {
@@ -193,13 +193,13 @@ class ProfileController extends AbstractProfileController
 
             $parameters['profile'] = $profile->setCustomer($customer);
 
-            return $this->render('ProfileAdminBundle:profile:card_content.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/profile/card_content.html.twig', $parameters);
         }
 
         if ($action === 'delete') {
             $this->profileHelper->deleteProfile($profileId, $client);
 
-            return $this->render('ProfileAdminBundle:profile:message_success_delete.html.twig', [
+            return $this->render('@ProfileAdmin/profile/message_success_delete.html.twig', [
                 'isZenith' => $isZenith,
                 'name'     => $profile->getName()
             ]);
@@ -258,7 +258,7 @@ class ProfileController extends AbstractProfileController
         $parameters['profile'] = $profile;
         $parameters['form']    = $formView;
 
-        return $this->render('ProfileAdminBundle:profile:action.html.twig', $parameters);
+        return $this->render('@ProfileAdmin/profile/action.html.twig', $parameters);
     }
 
     /**
@@ -275,7 +275,7 @@ class ProfileController extends AbstractProfileController
         $parameters = $this->getBaseParameters();
 
         if (!$this->authorizationChecker->isGranted(ActionRoles::listRoles())) {
-            return $this->render('ProfileAdminBundle:Expection:access_denied.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/Expection/access_denied.html.twig', $parameters);
         }
 
         try {
@@ -283,7 +283,7 @@ class ProfileController extends AbstractProfileController
             $account = $this->clientHelper->getClientAccount($client);
             $client->setAccount($account);
         } catch (ClientNotFoundException $exception) {
-            return $this->render('ProfileAdminBundle:Expection:client_not_found.html.twig', $parameters);
+            return $this->render('@ProfileAdmin/Expection/client_not_found.html.twig', $parameters);
         }
 
         $parameters['isGrantedEdit'] = $this->authorizationChecker->isGranted(ActionRoles::editRoles());
@@ -294,7 +294,7 @@ class ProfileController extends AbstractProfileController
 
         $parameters['profiles'] = $profiles;
 
-        return $this->render('ProfileAdminBundle:profile:tab_list.html.twig', $parameters);
+        return $this->render('@ProfileAdmin/profile/tab_list.html.twig', $parameters);
     }
 
     /**
@@ -312,7 +312,7 @@ class ProfileController extends AbstractProfileController
 
         $parameters['profiles'] = $profiles;
 
-        return $this->render('ProfileAdminBundle:profile:short_list.html.twig', $parameters);
+        return $this->render('@ProfileAdmin/profile/short_list.html.twig', $parameters);
     }
 
 }
