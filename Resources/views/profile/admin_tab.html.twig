@@ -1,4 +1,4 @@
 {% trans_default_domain 'profile_admin' %}
 {% set client = object %}
-{{ render(controller('@ProfileAdmin/Profile/shortList', {'client': client })) }}
+{{ render(controller('ProfileAdminBundle:Profile:shortList', {'client': client })) }}
 
