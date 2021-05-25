@@ -280,8 +280,9 @@ class ProfileController extends AbstractProfileController
 
         try {
             $client  = $this->getClientById($clientId);
-            $account = $this->clientHelper->getClientAccount($client);
-            $client->setAccount($account);
+            // todo переделать
+            //$account = $this->clientHelper->getClientAccount($client);
+            //$client->setAccount($account);
         } catch (ClientNotFoundException $exception) {
             return $this->render('@ProfileAdmin/Expection/client_not_found.html.twig', $parameters);
         }
