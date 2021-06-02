@@ -105,7 +105,6 @@ abstract class AbstractTariffController extends AbstractController
      */
     protected function getAdminRequest(Request $request)
     {
-
         $adminRequest = new TariffRequest();
 
         $form = $this->createForm(TariffRequestType::class, $adminRequest);
@@ -155,18 +154,20 @@ abstract class AbstractTariffController extends AbstractController
      */
     protected function tariffCard(int $clientId, int $profileId, int $tariffId)
     {
-
         $profile  = $this->getProfile($clientId, $profileId);
         $customer = $profile->getCustomer();
         $tariff   = $this->customerTariffHelper->getCustomerTariff($customer, $tariffId);
 
-        return $this->render('@ProfileAdmin/tariff/card.html.twig', [
-            'profile'       => $profile,
-            'customer'      => $customer,
-            'tariff'        => $tariff,
-            'isGrandedEdit' => $this->authorizationChecker->isGranted(ActionRoles::editRoles()),
-            'isZenith'      => $this->appFlags->isZenith()
-        ]);
+        return $this->render(
+            '@ProfileAdmin/tariff/card.html.twig',
+            [
+                'profile'       => $profile,
+                'customer'      => $customer,
+                'tariff'        => $tariff,
+                'isGrandedEdit' => $this->authorizationChecker->isGranted(ActionRoles::editRoles()),
+                'isZenith'      => $this->appFlags->isZenith()
+            ]
+        );
     }
 
     /**
@@ -193,7 +194,6 @@ abstract class AbstractTariffController extends AbstractController
      */
     protected function multiplierEmulation(TemplateTariff $templateTariff, int $multiplier)
     {
-
         // этот изврат нужен чтоб превратить TemplateTariff в CustomerTariff
         $json = $this->mappingHelper->serialize($templateTariff);
         /** @var CustomerTariff $customerTariff */
@@ -215,14 +215,15 @@ abstract class AbstractTariffController extends AbstractController
     /**
      * @inheritdoc
      */
-    protected function getTempalateTariffParameters(Request $request, int $clientId, int $tariffId)
+    protected function getTempalateTariffParameters(Request $request, int $clientId, int $accountId, int $tariffId)
     {
         $parameters = [];
 
-        $adminRequest = $this->getAdminRequest($request);
-        $client       = $this->getClientById($clientId);
-        $account      = $this->clientHelper->getClientAccount($client);
-        $profile1c    = $adminRequest->isFor1c();
+        $adminRequest  = $this->getAdminRequest($request);
+        $client        = $this->getClientById($clientId);
+        $account       = $this->clientHelper->getAccountById($accountId);
+        $remoteAccount = $this->clientHelper->getClientRemoteAccount($client, $accountId);
+        $profile1c     = $adminRequest->isFor1c();
 
         $customer = new Customer();
         $customer->setAccount($account);
@@ -241,6 +242,7 @@ abstract class AbstractTariffController extends AbstractController
         $parameters['tariff'] = $customerTariff;
 
         $profile = new Profiles();
+        $profile->setRemoteAccount($remoteAccount);
         $profile->setFor1C($profile1c);
         $profile->setClient($client);
         $profile->setCustomer($customer);

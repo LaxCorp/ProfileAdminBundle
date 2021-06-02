@@ -26,5 +26,7 @@
 {% endblock %}
 
 {% block content %}
-    {% include '@ProfileAdmin/profile/tab_list_content.html.twig' %}
+    {% for account_id, profiles in account_profiles %}
+        {% include '@ProfileAdmin/profile/tab_list_content.html.twig' %}
+    {% endfor %}
 {% endblock %}

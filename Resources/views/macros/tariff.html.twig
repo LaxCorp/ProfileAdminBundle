@@ -931,7 +931,7 @@
     {% set tabId = 'ttab_' ~ idHash %}
     {% set collapseId = 'tcollapse_' ~ idHash %}
 
-    <div class="panel panel-default" data-tariff-id="{{ tariff.id }}">
+    <div class="panel panel-default" data-tariff-id="{{ tariff.id }}" data-account-id="{{ customer.account.id }}">
         <div class="panel-heading" role="button" id="{{ tabId }}"
              data-toggle="collapse" data-parent="#accordion" href="#{{ collapseId }}">
             <div class="h5 panel-title">{{ macros_tariff.name(tariff) }}</div>

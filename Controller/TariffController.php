@@ -324,16 +324,17 @@ class TariffController extends AbstractTariffController
      * @inheritdoc
      * @Method({"POST"})
      * @Route(
-     *     "/client/{clientId}/profile/create/template/tariff_choose",
-     *     requirements={ "clientId": "\d+" },
+     *     "/client/{clientId}/account/{accountId}/profile/create/template/tariff_choose",
+     *     requirements={ "clientId": "\d+", "accountId": "\d+" },
      *     name="profile_admin__create_tariff_choose"
      * )
      */
-    public function templateTariffChoose(Request $request, int $clientId)
+    public function templateTariffChoose(Request $request, int $clientId, int $accountId)
     {
         $adminRequest    = $this->getAdminRequest($request);
         $client          = $this->getClientById($clientId);
-        $account         = $this->clientHelper->getClientAccount($client);
+        $account         = $this->clientHelper->getAccountById($accountId);
+        $remoteAccount   = $this->clientHelper->getClientRemoteAccount($client, $accountId);
         $currency        = $account->getCurrency();
         $templateTariffs = $this->templateTariffHelper->getTemplateTariffsByCurrencyCode($currency->getCode());
         $profile1c       = $adminRequest->isFor1c();
@@ -343,6 +344,7 @@ class TariffController extends AbstractTariffController
         $customer->setCustomerTariffs([]);
 
         $profile = new Profiles();
+        $profile->setRemoteAccount($remoteAccount);
         $profile->setFor1C($profile1c);
         $profile->setClient($client);
         $profile->setCustomer($customer);
@@ -381,14 +383,14 @@ class TariffController extends AbstractTariffController
      * @inheritdoc
      * @Method({"POST"})
      * @Route(
-     *     "/client/{clientId}/profile/create/template/tariff/preview/{tariffId}",
-     *     requirements={ "clientId": "\d+" , "tariffId": "\d+" },
+     *     "/client/{clientId}/account/{accountId}/profile/create/template/tariff/preview/{tariffId}",
+     *     requirements={ "clientId": "\d+" , "accountId": "\d+" , "tariffId": "\d+" },
      *     name="profile_admin__create_template_tariff_preview"
      * )
      */
-    public function tempalateTariffPreview(Request $request, int $clientId, int $tariffId)
+    public function tempalateTariffPreview(Request $request, int $clientId, int $accountId, int $tariffId)
     {
-        $parameters = $this->getTempalateTariffParameters($request, $clientId, $tariffId);
+        $parameters = $this->getTempalateTariffParameters($request, $clientId, $accountId, $tariffId);
 
         return $this->render('@ProfileAdmin/tariff/add_tariff_preview.html.twig', $parameters);
     }
@@ -397,14 +399,14 @@ class TariffController extends AbstractTariffController
      * @inheritdoc
      * @Method({"POST"})
      * @Route(
-     *     "/client/{clientId}/profile/create/template/tariff/add/{tariffId}",
-     *     requirements={ "clientId": "\d+" , "tariffId": "\d+" },
+     *     "/client/{clientId}/account/{accountId}/profile/create/template/tariff/add/{tariffId}",
+     *     requirements={ "clientId": "\d+", "accountId": "\d+" , "tariffId": "\d+" },
      *     name="profile_admin__create_template_tariff_add"
      * )
      */
-    public function addTemplateTariff(Request $request, int $clientId, int $tariffId)
+    public function addTemplateTariff(Request $request, int $clientId, int $accountId, int $tariffId)
     {
-        $parameters = $this->getTempalateTariffParameters($request, $clientId, $tariffId);
+        $parameters = $this->getTempalateTariffParameters($request, $clientId, $accountId, $tariffId);
 
         return $this->render('@ProfileAdmin/tariff/add_template_tariff.html.twig', $parameters);
     }

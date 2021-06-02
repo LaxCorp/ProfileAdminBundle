@@ -3,6 +3,7 @@
         apiUrl         : '/admin/app/client',
         dataMap        : {
             clientId       : 'client-id',
+            accountId      : 'account-id',
             profileId      : 'profile-id',
             tariffId       : 'tariff-id',
             replaceTariffId: 'replace-tariff-id',
@@ -36,7 +37,7 @@
         route: function (action, param) {
             switch (action) {
                 case 'add_tariff_choose':
-                    return 'profile/create/template/tariff_choose';
+                    return  'profile/create/template/tariff_choose';
 
                 case 'add_tariff':
                     return 'profile/create/template/tariff/add/' + param.tariffId;
@@ -66,13 +67,14 @@
                 $addButton.on('click', function () {
                     var param = {
                         clientId : $tariffsCont.data(opt.dataMap.clientId),
+                        accountId : $tariffsCont.data(opt.dataMap.accountId),
                         profileId: $tariffsCont.data(opt.dataMap.profileId),
                         for1c    : $tariffsCont.data(opt.dataMap.for1c)
                     };
                     var action = 'add_tariff_choose';
 
                     var route = methods.route(action, param);
-                    var path = methods.path(param.clientId, route);
+                    var path = methods.path(param.clientId, param.accountId, route);
 
                     var $container = $('body');
 
@@ -98,8 +100,8 @@
             $(root).on('click', opt.modalSelector, methods.modal);
         },
 
-        path: function (clientId, route) {
-            return opt.apiUrl + '/' + clientId + '/' + route;
+        path: function (clientId, accountId, route) {
+            return opt.apiUrl + '/' + clientId + '/account/' + accountId + '/' + route;
         },
 
         getParent: function (e, dataName) {
@@ -160,7 +162,7 @@
             param.resultContainer = methods.getParam($this, opt.dataMap.resultContainer);
             var action = methods.getParam($this, 'action');
             var route = methods.route(action, param);
-            var path = methods.path(param.clientId, route);
+            var path = methods.path(param.clientId, param.accountId, route);
             var $tabContainer = methods.getParent($this, 'tariff-id');
             var $tariffOptions = methods.getParent($this, ['container=tariff_options']);
 
@@ -209,7 +211,7 @@
             param.resultContainer = methods.getParam($this, opt.dataMap.resultContainer);
             var action = methods.getParam($this, 'action');
             var route = methods.route(action, param);
-            var path = methods.path(param.clientId, route);
+            var path = methods.path(param.clientId, param.accountId, route);
 
             var $tariffOptions = methods.getParent($this, ['container=tariff_options']);
 
@@ -275,7 +277,7 @@
             }
 
             var route = methods.route(action, param);
-            var path = methods.path(param.clientId, route);
+            var path = methods.path(param.clientId, param.accountId, route);
 
             methods.loader($container, 'show');
 

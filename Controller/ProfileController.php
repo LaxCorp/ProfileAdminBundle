@@ -21,22 +21,25 @@ class ProfileController extends AbstractProfileController
      * @inheritdoc
      *
      * @Route(
-     *     "/client/{clientId}/profile/create", requirements={ "clientId": "\d+" },
-     *      name="profile_admin__create_profile"
+     *     "/client/{clientId}/account/{accountId}/profile/create",
+     *     requirements={ "clientId": "\d+", "accountId": "\d+" },
+     *     name="profile_admin__create_profile"
      * )
      * @Route(
-     *     "/client/{clientId}/profile/create/{for1c}",
-     *      requirements={ "clientId": "\d+", "for1c": "for1c" },
+     *     "/client/{clientId}/account/{accountId}/profile/create/{for1c}",
+     *      requirements={ "clientId": "\d+", "accountId": "\d+", "for1c": "for1c" },
      *      name="profile_admin__create_profile_for1c"
      * )
      */
-    public function createProfile(Request $request, int $clientId, ?string $for1c)
+    public function createProfile(Request $request, int $clientId, int $accountId, ?string $for1c)
     {
         $for1c = boolval($for1c);
 
         $isZenith = $this->appFlags->isZenith();
 
         $parameters = $this->getBaseParameters();
+
+        $parameters['account_id'] = $accountId;
 
         if (!$this->authorizationChecker->isGranted(ActionRoles::createRoles())) {
             return $this->render('@ProfileAdmin/Expection/access_denied.html.twig', $parameters);
@@ -48,8 +51,8 @@ class ProfileController extends AbstractProfileController
 
         try {
             $client  = $this->getClientById($clientId);
-            $account = $this->clientHelper->getClientAccount($client);
-            $client->setAccount($account);
+            $remoteAccount = $this->clientHelper->getClientRemoteAccount($client, $accountId);
+            $account = $this->clientHelper->getAccountById($accountId);
             $email = $client->getUser()->getEmail();
         } catch (ClientNotFoundException $exception) {
             return $this->render('@ProfileAdmin/Expection/client_not_found.html.twig', $parameters);
@@ -63,7 +66,7 @@ class ProfileController extends AbstractProfileController
         $customer->setCustomerTariffs([]); // по началу пустой
 
         $profile = new Profiles();
-        $profile->setAccountId($client->getAccountId());
+        $profile->setRemoteAccount($remoteAccount);
         $profile->setClient($client);
         $profile->setCustomer($customer);
         $profile->setFor1C($for1c);
@@ -171,8 +174,6 @@ class ProfileController extends AbstractProfileController
 
         try {
             $client  = $this->getClientById($clientId);
-            $account = $this->clientHelper->getClientAccount($client);
-            $client->setAccount($account);
         } catch (ClientNotFoundException $exception) {
             return $this->render('@ProfileAdmin/Expection/client_not_found.html.twig', $parameters);
         }
@@ -291,9 +292,9 @@ class ProfileController extends AbstractProfileController
 
         $parameters['client'] = $client;
 
-        $profiles = $this->profileHelper->getProfiles($client);
+        $accountProfiles = $this->profileHelper->getAccountsProfiles($client);
 
-        $parameters['profiles'] = $profiles;
+        $parameters['account_profiles'] = $accountProfiles;
 
         return $this->render('@ProfileAdmin/profile/tab_list.html.twig', $parameters);
     }
@@ -309,9 +310,9 @@ class ProfileController extends AbstractProfileController
 
         $parameters['client'] = $client;
 
-        $profiles = $this->profileHelper->getProfiles($client);
+        $profiles = $this->profileHelper->getAccountsProfiles($client);
 
-        $parameters['profiles'] = $profiles;
+        $parameters['account_profiles'] = $profiles;
 
         return $this->render('@ProfileAdmin/profile/short_list.html.twig', $parameters);
     }

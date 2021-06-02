@@ -7,17 +7,17 @@
 {% set customer = profile.customer %}
 {% if isZenith %}
     {% set create_new = 'profile.create_new_job'|trans %}
-    {% set create_url = path('profile_admin__create_profile', {'clientId': client.id}) %}
+    {% set create_url = path('profile_admin__create_profile', {'clientId': client.id, 'accountId': account_id}) %}
     {% set box_title = 'label.create_with_tariffs'|trans %}
     {% set button_text = 'button.add_tariff'|trans %}
     {% set list_text = 'jobs'|trans %}
 {% else %}
     {% if for1c %}
         {% set create_new = 'profile.create_new_for1c'|trans %}
-        {% set create_url = path('profile_admin__create_profile_for1c', {'clientId': client.id, 'for1c': 'for1c'}) %}
+        {% set create_url = path('profile_admin__create_profile_for1c', {'clientId': client.id, 'accountId': account_id, 'for1c': 'for1c'}) %}
     {% else %}
         {% set create_new = 'profile.create_new'|trans %}
-        {% set create_url = path('profile_admin__create_profile', {'clientId': client.id}) %}
+        {% set create_url = path('profile_admin__create_profile', {'clientId': client.id, 'accountId': account_id}) %}
     {% endif %}
     {% set box_title = 'label.create_with_licenses'|trans %}
     {% set button_text = 'button.add_license'|trans %}
@@ -47,7 +47,7 @@
     <div class="box box-primary">
         <div class="box-header">
             <h4 class="box-title">
-                {{ create_new }}
+                {{ create_new }} (account: {{ account_id }})
             </h4>
         </div>
         <div class="box-body">
@@ -78,7 +78,7 @@
         <div class="box-body">
             <div data-container="profile_admin" data-client-id="{{ profile.client.id }}">
                 <div data-container="template_tariffs" data-client-id="{{ profile.client.id }}" data-profile-id=""
-                     data-add-text="{{ button_text }}" data-for1c="{{ for1c }}">
+                     data-account-id="{{ account_id }}" data-add-text="{{ button_text }}" data-for1c="{{ for1c }}">
                     {% for tariff in tariffs %}
                         {% if tariff.replacement != true %}
                             {{ macros_tariff.card(tariff, customer, profile, isZenith) }}
