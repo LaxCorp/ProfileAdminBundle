@@ -6,22 +6,22 @@
     <div class="col-md-4 row-striped-large">
         {{ macros_profile.param_row('label.client_name'|trans, client.user.name) }}
         {{ macros_profile.param_row('Email', client.user.email) }}
-{# todo    #}
-{#        {{ macros_profile.param_row(#}
-{#            'label.account_amount'|trans,#}
-{#            macros_tariff.money(#}
-{#                client.account.amount,#}
-{#                macros_tariff.account_currency(client.account)#}
-{#            )#}
-{#        ) }}#}
-{#        {{ macros_profile.param_row(#}
-{#            'label.account_credit'|trans,#}
-{#            macros_tariff.money(#}
-{#                client.account.credit,#}
-{#                macros_tariff.account_currency(client.account)#}
-{#            )#}
-{#        ) }}#}
-{#        {{ macros_profile.param_row('account', client.account.id) }}#}
-{#        #}
+        {% set account = client_accounts[account_id] %}
+        {{ macros_profile.param_row(
+            'label.account_amount'|trans,
+            macros_tariff.money(
+                account.amount,
+                macros_tariff.account_currency(account)
+            )
+        ) }}
+        {{ macros_profile.param_row(
+            'label.account_credit'|trans,
+            macros_tariff.money(
+                account.credit,
+                macros_tariff.account_currency(account)
+            )
+        ) }}
+        {{ macros_profile.param_row('account', account.id) }}
+
     </div>
 </div>

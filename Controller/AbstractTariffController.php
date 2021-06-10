@@ -198,7 +198,6 @@ abstract class AbstractTariffController extends AbstractController
         $json = $this->mappingHelper->serialize($templateTariff);
         /** @var CustomerTariff $customerTariff */
         $customerTariff = $this->mappingHelper->deserialize($json, CustomerTariff::class);
-
         unset($json, $templateTariff);
 
         $customerTariff->setMultiplier($multiplier);

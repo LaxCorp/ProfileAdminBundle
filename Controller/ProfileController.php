@@ -291,6 +291,7 @@ class ProfileController extends AbstractProfileController
         $parameters['isGrantedEdit'] = $this->authorizationChecker->isGranted(ActionRoles::editRoles());
 
         $parameters['client'] = $client;
+        $parameters['client_accounts'] = $this->clientHelper->getClientAccounts($client);
 
         $accountProfiles = $this->profileHelper->getAccountsProfiles($client);
 
